@@ -1,0 +1,28 @@
+{   
+    "DB_port": "5432",
+    "DB_host": "localhost",
+    "DB_user": "forkscanner",
+    "DB_password" : "forkscanner",
+    "DB_name" : "judge",
+    
+    "forkscanner_host": "164.92.191.219",
+    "forkscanner_ws_port": "8340",
+    "forkscanner_rpc_port": "8339",    
+    
+    "btc_node_host" : "143.244.138.170:8332",
+    "btc_node_user" : "bitcoin",
+    "btc_node_pass" : "Persario_1",
+    "btc_node_protocol" : "http://",
+    "fee_rate_adjustment" : "10",
+    "wallet_name": "online",
+    "judge_btc_wallet_name" : "rbf",
+    "btc_xpublic_key": "[f2ee8d39/84h/0h/0h]xpub6BhivFwKw8faYQaQcmwhjchA1uHQk7vaXJtehCqdhP2x4ETZ6AgCUAPfVeFahDWRQVQ7JKoxoV8G16ji7xei48PcZkVf8hcjNkwKByBLH5J/0/*",
+    "signer_xpublic_key": "[0168d83d/84h/0h/0h]xpub6CDgM5aQYiUC8GoHyxe6hkU4M3idbHdismHeLxvMfArH5zFfdCrWcrLJbHf649G8iY3UCD3kBvJptaA8NayZRsPKGcY4H62nbcCSoWeYb3c/0/*",
+
+    "signer_btc_node_host" : "164.92.191.219:8332",
+    "signer_btc_node_user" : "bitcoin",
+    "signer_btc_node_pass" : "Persario_1",
+    "signer_btc_node_protocol" : "http://",
+    "eth_rpc_host" : ""
+    
+}
