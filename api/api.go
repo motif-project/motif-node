@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/AhmadAshraf2/Judge-AVS/address"
@@ -17,6 +18,7 @@ type Service struct {
 }
 
 func Server() {
+	fmt.Println("starting API server")
 	router := mux.NewRouter()
 
 	router.HandleFunc("/eigen/node", NodeHandler).Methods("GET")

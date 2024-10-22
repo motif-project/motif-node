@@ -70,8 +70,8 @@ func buildSimpleMultisigDescriptor(depositorPubKey string) (string, error) {
 	required := 3
 	var signerKey string
 	judgePubKey := viper.GetString("btc_xpublic_key")
-	signerPubKey := viper.GetStringSlice("signer_xpublic_key")
-	signerKey += fmt.Sprintf(",%s", signerPubKey[0])
+	signerPubKey := viper.GetString("signer_xpublic_key")
+	signerKey += fmt.Sprintf(",%s", signerPubKey)
 	descriptorScript := fmt.Sprintf("wsh(multi(%d,%s%s,%s))", required, judgePubKey, signerKey, depositorPubKey)
 	fmt.Println(descriptorScript)
 	return descriptorScript, nil
