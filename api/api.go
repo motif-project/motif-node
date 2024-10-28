@@ -53,7 +53,7 @@ func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !utils.IsValidEthAddress(request.EthAddr) {
-		http.Error(w, "Invalid PSBT string", http.StatusBadRequest)
+		http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
 		return
 	}
 
