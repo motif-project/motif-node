@@ -39,7 +39,7 @@ func Server() {
 	router.HandleFunc("/eigen/node/health", HealthCheckHandler).Methods("GET")
 	router.HandleFunc("/eigen/node/services", ServicesHandler).Methods("GET")
 	router.HandleFunc("/eigen/node/services/{service_ID}/health", ServiceHealthHandler).Methods("GET")
-	router.HandleFunc("/eigen/get_address", GetAddressHandler).Methods("Get")
+	router.HandleFunc("/eigen/get_address", GetAddressHandler).Methods("POST")
 	router.HandleFunc("/eigen/get_unsigned_psbt", GetUnSignedPsbtHandler).Methods("POST")
 	router.HandleFunc("/eigen/submit_signed_psbt", SubmitSignedPsbtHandler).Methods("POST")
 
