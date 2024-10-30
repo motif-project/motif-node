@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"log"
 
 	"github.com/AhmadAshraf2/Judge-AVS/comms"
 	"github.com/btcsuite/btcd/btcec"
@@ -14,10 +13,7 @@ import (
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcutil/psbt"
 	"github.com/cosmos/btcutil/base58"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/viper"
 )
 
@@ -54,23 +50,6 @@ func LoadBtcWallet(walletName string) {
 	if err != nil {
 		fmt.Println("Failed to load wallet : ", err)
 	}
-}
-
-func GenerateEthKeyPair() accounts.Account {
-	// Generate a new random private key
-	privateKey, err := crypto.GenerateKey()
-	if err != nil {
-		log.Fatalf("Failed to generate private key: %v", err)
-	}
-
-	password := viper.GetString("eth_keystore_password")
-	ks := keystore.NewKeyStore("keystore", keystore.StandardScryptN, keystore.StandardScryptP)
-	account, err := ks.ImportECDSA(privateKey, password)
-	if err != nil {
-		log.Fatalf("Failed to import private key: %v", err)
-	}
-
-	return account
 }
 
 func CreateTxFromHex(txHex string) (*wire.MsgTx, error) {

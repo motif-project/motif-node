@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/url"
 
+	"github.com/AhmadAshraf2/Judge-AVS/comms"
 	"github.com/AhmadAshraf2/Judge-AVS/db"
 	"github.com/AhmadAshraf2/Judge-AVS/types"
 	"github.com/gorilla/websocket"
@@ -62,6 +63,12 @@ func WatchAddress(url url.URL) {
 		dbconn := db.InitDB()
 		for _, notification := range watchtower_notifications {
 			db.InsertNotifications(dbconn, notification)
+			TxHash, err := comms.CallConfirmBtcDeposit(notification.Sending)
+			if err != nil {
+				fmt.Println("error in address watcher: ", err)
+				continue
+			}
+			fmt.Println("Confirm Btc Deposit TxHash: ", TxHash)
 		}
 		dbconn.Close()
 	}

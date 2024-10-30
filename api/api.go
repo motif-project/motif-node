@@ -52,6 +52,8 @@ func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 		EthAddr      string `json:"ethAddr"`
 	}
 
+	fmt.Println("eth address : ", request.EthAddr)
+
 	if !utils.IsValidEthAddress(request.EthAddr) {
 		http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
 		return
