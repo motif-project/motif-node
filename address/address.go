@@ -154,7 +154,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 	totalAmountInBTC := utils.SatsToBtc(int64(totalAmountTxIn))
 
 	fmt.Println("withdraw btc addr : ", withdrawBTCAddress)
-	fmt.Println("total amount in : ", totalAmountTxIn)
+	fmt.Println("total amount in : ", totalAmountInBTC)
 
 	outputs = append(outputs, comms.TxOutput{withdrawBTCAddress: totalAmountInBTC})
 
@@ -178,7 +178,10 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 		fmt.Println("error in getting fee : ", err)
 		return "", err
 	}
-	outputs = []comms.TxOutput{comms.TxOutput{withdrawBTCAddress: float64(totalAmountTxIn - uint64(fee))}}
+
+	totalAmountInBTC = totalAmountInBTC - utils.SatsToBtc(fee)
+
+	outputs = []comms.TxOutput{comms.TxOutput{withdrawBTCAddress: totalAmountInBTC}}
 
 	p, err := comms.CreatePsbt(inputs, outputs, 0, wallet)
 	if err != nil {
