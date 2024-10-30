@@ -165,6 +165,9 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 		return "", err
 	}
 
+	fmt.Println("transaction in : ", multisigTx.TxIn[0].PreviousOutPoint.Hash.String(), multisigTx.TxIn[0].PreviousOutPoint.Index)
+	fmt.Println("transaction out : ", multisigTx.TxOut[0].PkScript, multisigTx.TxOut[0].Value)
+
 	fee, err := utils.GetFeeFromBtcNode(multisigTx)
 	if err != nil {
 		fmt.Println("error in getting fee : ", err)
