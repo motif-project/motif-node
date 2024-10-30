@@ -37,7 +37,7 @@ func QueryMultisigAddressByEthAddress(dbconn *sql.DB, ethAddr string) []types.Mu
 	// fmt.Println("getting address for height: ", height)
 	var DB_reader *sql.Rows
 	var err error
-	DB_reader, err = dbconn.Query("select * from multi_sig_address where eth_address = $1 and archived = false", ethAddr)
+	DB_reader, err = dbconn.Query("select * from multi_sig_address where ethaddress = $1 and archived = false", ethAddr)
 
 	if err != nil {
 		fmt.Println("An error occured while query address by Eth Address: ", err)
