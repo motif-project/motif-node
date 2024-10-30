@@ -64,7 +64,7 @@ func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !utils.IsValidBtcPubKey(request.WithdrawAddr) {
+	if !utils.IsValidBtcAddress(request.WithdrawAddr) {
 		http.Error(w, "Invalid withdraw Btc Address", http.StatusBadRequest)
 		return
 	}
