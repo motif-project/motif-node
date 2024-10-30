@@ -154,7 +154,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 	totalAmountInBTC := utils.SatsToBtc(int64(totalAmountTxIn))
 
 	fmt.Println("withdraw btc addr : ", withdrawBTCAddress)
-	fmt.Println("total amount in : ", totalAmountInBTC)
+	fmt.Println("total amount in BTC: ", totalAmountInBTC)
 
 	outputs = append(outputs, comms.TxOutput{withdrawBTCAddress: totalAmountInBTC})
 
@@ -170,9 +170,6 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 		return "", err
 	}
 
-	fmt.Println("transaction in : ", multisigTx.TxIn[0].PreviousOutPoint.Hash.String(), multisigTx.TxIn[0].PreviousOutPoint.Index)
-	fmt.Println("transaction out : ", multisigTx.TxOut[0].PkScript, multisigTx.TxOut[0].Value)
-
 	fee, err := utils.GetFeeFromBtcNode(multisigTx)
 	if err != nil {
 		fmt.Println("error in getting fee : ", err)
@@ -180,6 +177,8 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 	}
 
 	totalAmountInBTC = totalAmountInBTC - utils.SatsToBtc(fee)
+	fmt.Println("fee in btc : ", utils.SatsToBtc(fee))
+	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
 	outputs = []comms.TxOutput{comms.TxOutput{withdrawBTCAddress: totalAmountInBTC}}
 

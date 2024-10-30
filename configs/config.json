@@ -23,6 +23,8 @@
     "signer_btc_node_user" : "bitcoin",
     "signer_btc_node_pass" : "Persario_1",
     "signer_btc_node_protocol" : "http://",
-    "eth_rpc_host" : ""
-    
+
+    "eth_rpc_host" : "",
+    "service_manager_contract_address": "",
+    "eth_keystore_dir": ""
 }
