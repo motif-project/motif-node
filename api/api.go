@@ -52,6 +52,11 @@ func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 		EthAddr      string `json:"ethAddr"`
 	}
 
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
 	fmt.Println("eth address : ", request.EthAddr)
 
 	if !utils.IsValidEthAddress(request.EthAddr) {
@@ -77,6 +82,11 @@ func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 func SubmitSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		Psbt string `json:"psbt"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
 	}
 
 	if !utils.IsValidPsbt(request.Psbt) {
