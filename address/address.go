@@ -176,8 +176,8 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 		return "", err
 	}
 
-	totalAmountInBTC = totalAmountInBTC - utils.SatsToBtc(fee)
-	fmt.Println("fee in btc : ", utils.SatsToBtc(fee))
+	totalAmountInBTC = utils.SatsToBtc(int64(totalAmountTxIn) - int64(fee))
+	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
 	outputs = []comms.TxOutput{comms.TxOutput{withdrawBTCAddress: totalAmountInBTC}}

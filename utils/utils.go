@@ -90,7 +90,7 @@ func GetFeeFromBtcNode(tx *wire.MsgTx) (int64, error) {
 	weight := (baseSize * 3) + totalSize
 	vsize := (weight + 3) / 4
 	fmt.Println("tx size in bytes : ", vsize)
-	fee := float64(vsize) * float64(feeRate/1024)
+	fee := float64(vsize) * float64(feeRate) / float64(1024)
 	fmt.Println("fee for this tx : ", fee)
 	return int64(fee), nil
 }
