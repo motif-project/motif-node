@@ -151,6 +151,9 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 		totalAmountTxIn += u.Amount
 	}
 
+	fmt.Println("withdraw btc addr : ", withdrawBTCAddress)
+	fmt.Println("total amount in : ", totalAmountTxIn)
+
 	outputs = append(outputs, comms.TxOutput{withdrawBTCAddress: float64(totalAmountTxIn)})
 
 	hexTx, err := comms.CreateRawTx(inputs, outputs, 0, wallet)
