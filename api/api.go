@@ -115,10 +115,10 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !utils.IsValidBtcPubKey(request.PubKey) {
-		http.Error(w, "Invalid Bitcoin public key", http.StatusBadRequest)
-		return
-	}
+	// if !utils.IsValidBtcPubKey(request.PubKey) {
+	// 	http.Error(w, "Invalid Bitcoin public key", http.StatusBadRequest)
+	// 	return
+	// }
 	if !utils.IsValidEthAddress(request.EthAddr) {
 		http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
 		return
