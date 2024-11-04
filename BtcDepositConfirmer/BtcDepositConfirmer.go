@@ -32,7 +32,7 @@ func CheckDeposit() {
 				for _, txOut := range tx.Vout {
 					for _, address := range txOut.ScriptPubKey.Addresses {
 						if multiSigAddress.Address == address {
-							_, err := comms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, *request.Amount)
+							_, err := comms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, 1000)
 							if err != nil {
 								fmt.Println("Failed to call confirm btc deposit: ", err)
 								continue

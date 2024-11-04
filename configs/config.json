@@ -19,6 +19,7 @@
     "btc_xpublic_key": "[f2ee8d39/84h/0h/0h]xpub6BhivFwKw8faYQaQcmwhjchA1uHQk7vaXJtehCqdhP2x4ETZ6AgCUAPfVeFahDWRQVQ7JKoxoV8G16ji7xei48PcZkVf8hcjNkwKByBLH5J/0/*",
 
     "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
+    "eth_ws_host" :"wss://ethereum-holesky-rpc.publicnode.com",
     "eth_keystore_dir": "keystore",
     "eth_keystore_password": "Persario_1",
     "opr_metadata_uri" : "",

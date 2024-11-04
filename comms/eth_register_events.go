@@ -40,7 +40,7 @@ func SubscribeToDepositRequests() {
 	sub, err := podManager.WatchVerifyBitcoinDepositRequest(
 		&bind.WatchOpts{Context: context.Background()},
 		ch,
-		[]common.Address{podManagerAddr},
+		nil,
 		[]common.Address{oprEthAccount.Address},
 	)
 	if err != nil {
