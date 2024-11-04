@@ -166,7 +166,10 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		return "", err
 	}
 
-	pubkey, _ := crypto.Ecrecover(hash.Bytes(), signature)
+	pubkey, err := crypto.Ecrecover(hash.Bytes(), signature)
+	if err != nil {
+		fmt.Println("failed to recover pubkey: ", err)
+	}
 	fmt.Println("============")
 	fmt.Println(pubkey)
 	fmt.Println(hex.EncodeToString(pubkey))
