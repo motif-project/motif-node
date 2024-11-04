@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"math/big"
 
 	"github.com/AhmadAshraf2/Judge-AVS/types"
 	"github.com/spf13/viper"
@@ -119,19 +120,48 @@ func QueryUtxo(dbconn *sql.DB, address string) []types.Utxo {
 	return utxos
 }
 
-func InsertNotifications(dbconn *sql.DB, element types.WatchtowerNotification) {
-	_, err := dbconn.Exec("INSERT into notification VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-		element.Block,
-		element.Receiving,
-		element.Satoshis,
-		element.Height,
-		element.Receiving_txid,
+func InsertDepositRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string, amount *big.Int) {
+	_, err := dbconn.Exec("INSERT into deposit_request VALUES ($1, $2, $3, $4, $5)",
+		podAddr,
+		operatorAddr,
+		txid,
+		amount,
 		false,
-		element.Sending_txinputs[0].Address,
-		element.Receiving_vout,
-		-1,
 	)
 	if err != nil {
-		fmt.Println("An error occured while insert Notification query: ", err)
+		fmt.Println("An error occured while insert deposit request query: ", err)
+	}
+}
+
+func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositRequest {
+	DB_reader, err := dbconn.Query("select * from deposit_request where Archived = false")
+	if err != nil {
+		fmt.Println("An error occured while query deposit request: ", err)
+	}
+
+	defer DB_reader.Close()
+	depositRequests := make([]types.BtcDepositRequest, 0)
+
+	for DB_reader.Next() {
+		depositRequest := types.BtcDepositRequest{}
+		err := DB_reader.Scan(
+			&depositRequest.PodAddress,
+			&depositRequest.OperatorAddress,
+			&depositRequest.TransactionID,
+			&depositRequest.Amount,
+			&depositRequest.Archived,
+		)
+		if err != nil {
+			fmt.Println(err)
+		}
+		depositRequests = append(depositRequests, depositRequest)
+	}
+	return depositRequests
+}
+
+func MarkDepositRequestAsConfirmed(dbconn *sql.DB, txid string) {
+	_, err := dbconn.Exec("UPDATE deposit_request SET archived = true WHERE TransactionID = $1", txid)
+	if err != nil {
+		fmt.Println("An error occured while updating deposit request query: ", err)
 	}
 }

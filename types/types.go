@@ -1,29 +1,12 @@
 package types
 
-type WatchtowerResponse struct {
-	Jsonrpc string
-	Method  string
-	Params  []WatchtowerNotification
-}
+import "math/big"
 
 type WatchtowerTxInput struct {
 	Address string
 	Amount  uint64
 	Txid    string
 	Vout    uint32
-}
-
-type WatchtowerNotification struct {
-	Block            string
-	Height           uint64
-	Receiving        string
-	Satoshis         uint64
-	Receiving_txid   string
-	Sending_txinputs []WatchtowerTxInput
-	Archived         bool
-	Receiving_vout   uint64
-	Sending          string
-	Sending_vout     int32
 }
 
 type MultiSigAddress struct {
@@ -52,4 +35,12 @@ type GetUnsignedPsbtArgs struct {
 
 type SubmitSignedPSBT struct {
 	Psbt string
+}
+
+type BtcDepositRequest struct {
+	PodAddress      string   // Ethereum address of the pod
+	OperatorAddress string   // Ethereum address of the operator
+	TransactionID   string   // Transaction ID of the Bitcoin deposit
+	Amount          *big.Int // Amount of the deposit
+	Archived        bool     // Status of the deposit request
 }

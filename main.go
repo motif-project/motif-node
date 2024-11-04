@@ -2,31 +2,34 @@ package main
 
 import (
 	"fmt"
-	"net/url"
 	"sync"
 
 	_ "github.com/lib/pq"
-
-	"github.com/AhmadAshraf2/Judge-AVS/api"
-	"github.com/AhmadAshraf2/Judge-AVS/bridge"
-	"github.com/AhmadAshraf2/Judge-AVS/utils"
 	"github.com/spf13/viper"
+
+	"github.com/AhmadAshraf2/Judge-AVS/BtcDepositConfirmer"
+	"github.com/AhmadAshraf2/Judge-AVS/api"
+	"github.com/AhmadAshraf2/Judge-AVS/comms"
+	"github.com/AhmadAshraf2/Judge-AVS/operator"
+	"github.com/AhmadAshraf2/Judge-AVS/utils"
 )
 
-func initialize() url.URL {
+func initialize() {
 	utils.InitConfigFile()
 	utils.LoadBtcWallet(viper.GetString("wallet_name"))
-	forkscannerHost := fmt.Sprintf("%v:%v", viper.Get("forkscanner_host"), viper.Get("forkscanner_ws_port"))
-	forkscannerUrl := url.URL{Scheme: "ws", Host: forkscannerHost, Path: "/"}
-
-	return forkscannerUrl
+	utils.LoadBtcWallet(viper.GetString("signer_wallet_name"))
+	ethAccount := comms.LoadEthAccount()
+	fmt.Println("Eth account: ", ethAccount.Address.Hex())
+	operator.RegisterOperator()
 }
 
 func main() {
-	forkscannerUrl := initialize()
+	initialize()
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go api.Server()
-	bridge.WatchAddress(forkscannerUrl)
+	wg.Add(1)
+	go BtcDepositConfirmer.CheckDeposit()
+	comms.SubscribeToDepositRequests()
 	wg.Wait()
 }

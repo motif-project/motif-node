@@ -136,8 +136,6 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, ethClientAddr string)
 	utxos := db.QueryUtxo(dbconn, multiSigAddress.Address)
 
 	if len(utxos) <= 0 {
-		// need to decide if this needs to be enabled
-		// addr := generateAndRegisterNewAddress(accountName, height+noOfMultisigs, sweepAddress.Address)
 		fmt.Println("INFO : No funds in address : ", multiSigAddress.Address)
 		return "", errors.New("no BTC UTXO found")
 	}

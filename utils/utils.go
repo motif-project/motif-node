@@ -7,7 +7,9 @@ import (
 
 	"github.com/AhmadAshraf2/Judge-AVS/comms"
 	"github.com/btcsuite/btcd/btcec"
+	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
@@ -27,7 +29,7 @@ func InitConfigFile() {
 	}
 }
 
-func getBitcoinRpcClient(walletName string) *rpcclient.Client {
+func getBitcoinRpcClient() *rpcclient.Client {
 	connCfg := &rpcclient.ConnConfig{
 		Host:         viper.GetString("btc_node_host"),
 		User:         viper.GetString("btc_node_user"),
@@ -45,7 +47,8 @@ func getBitcoinRpcClient(walletName string) *rpcclient.Client {
 }
 
 func LoadBtcWallet(walletName string) {
-	client := getBitcoinRpcClient(walletName)
+	client := getBitcoinRpcClient()
+	defer client.Shutdown()
 	_, err := client.LoadWallet(walletName)
 	if err != nil {
 		fmt.Println("Failed to load wallet : ", err)
@@ -68,6 +71,25 @@ func CreateTxFromHex(txHex string) (*wire.MsgTx, error) {
 		return nil, fmt.Errorf("failed to deserialize transaction: %v", err)
 	}
 
+	return tx, nil
+}
+
+func GetRawTransaction(txid string) (*btcjson.TxRawResult, error) {
+
+	client := getBitcoinRpcClient()
+	defer client.Shutdown()
+
+	// Convert txid to chainhash.Hash
+	txHash, err := chainhash.NewHashFromStr(txid)
+	if err != nil {
+		fmt.Println("Failed to create tx hash: ", err)
+		return nil, err
+	}
+	tx, err := client.GetRawTransactionVerbose(txHash)
+	if err != nil {
+		fmt.Println("Failed to get raw transaction: ", err)
+		return nil, err
+	}
 	return tx, nil
 }
 

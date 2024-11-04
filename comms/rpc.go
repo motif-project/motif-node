@@ -24,13 +24,6 @@ func SendRPC(method string, data []interface{}, wallet string, signer bool) ([]b
 	pass := viper.GetString("btc_node_pass")
 	protocol := viper.GetString("btc_node_protocol")
 
-	if signer == true {
-		host = viper.GetString("signer_btc_node_host")
-		user = viper.GetString("signer_btc_node_user")
-		pass = viper.GetString("signer_btc_node_pass")
-		protocol = viper.GetString("signer_btc_node_protocol")
-	}
-
 	request := JSONRPCRequest{
 		ID:      1,
 		Method:  method,

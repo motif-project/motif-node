@@ -17,14 +17,14 @@
     "wallet_name": "online",
     "judge_btc_wallet_name" : "rbf",
     "btc_xpublic_key": "[f2ee8d39/84h/0h/0h]xpub6BhivFwKw8faYQaQcmwhjchA1uHQk7vaXJtehCqdhP2x4ETZ6AgCUAPfVeFahDWRQVQ7JKoxoV8G16ji7xei48PcZkVf8hcjNkwKByBLH5J/0/*",
-    "signer_xpublic_key": "[0168d83d/84h/0h/0h]xpub6CDgM5aQYiUC8GoHyxe6hkU4M3idbHdismHeLxvMfArH5zFfdCrWcrLJbHf649G8iY3UCD3kBvJptaA8NayZRsPKGcY4H62nbcCSoWeYb3c/0/*",
 
-    "signer_btc_node_host" : "164.92.191.219:8332",
-    "signer_btc_node_user" : "bitcoin",
-    "signer_btc_node_pass" : "Persario_1",
-    "signer_btc_node_protocol" : "http://",
-
-    "eth_rpc_host" : "",
-    "service_manager_contract_address": "",
-    "eth_keystore_dir": ""
+    "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
+    "eth_keystore_dir": "keystore",
+    "eth_keystore_password": "Persario_1",
+    "opr_metadata_uri" : "",
+    "eigen_delegation_manager_address" : "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
+    "bitdsm_registry_address": "0x9619e0b51531ba2607d55422d66b14c570d5de7a",
+    "service_manager_address": "0x3e091b2318356b1aa1d5f0bd846e956b48beb238",
+    "eigen_avs_directory_address": "0x055733000064333CaDDbC92763c58BF0192fFeBf",
+    "pod_manager_address": ""
 }
