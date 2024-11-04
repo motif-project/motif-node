@@ -2,6 +2,7 @@ package BtcDepositConfirmer
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/AhmadAshraf2/Judge-AVS/comms"
 	"github.com/AhmadAshraf2/Judge-AVS/db"
@@ -42,6 +43,8 @@ func CheckDeposit() {
 			}
 
 		}
+		time.Sleep(3 * time.Minute)
+
 	}
 
 }
