@@ -69,16 +69,19 @@ func RegisterOperator() {
 			viper.GetString("opr_metadata_uri"), // metadata URI
 		)
 		if err != nil {
-			log.Fatalf("Error in registering as operator: %v", err)
+			fmt.Println("Error in registering as operator: ", err)
+			panic(err)
 		}
 		receipt, err := bind.WaitMined(context.Background(), client, tx)
 		if err != nil {
-			log.Fatalf("Failed to wait for transaction receipt: %v", err)
+			fmt.Println("Failed to wait for transaction receipt: ", err)
+			panic(err)
 		}
 		if receipt.Status == 1 {
 			fmt.Println("Operator registered to Core EigenLayer contracts")
 		} else {
-			log.Fatalf("Transaction failed: %v", receipt)
+			fmt.Println("Transaction failed: ", receipt)
+			panic("Operator registration failed")
 		}
 	}
 
