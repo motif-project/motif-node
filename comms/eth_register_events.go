@@ -65,6 +65,9 @@ func SubscribeToDepositRequests() {
 }
 
 func handleDepositRequest(event *PodManager.PodManagerVerifyBitcoinDepositRequest) {
+	fmt.Println("got an event with data : ", event.BitcoinDepositRequest)
+	fmt.Println(event.Operator)
+	fmt.Println(event.Pod)
 	dbconn := db.InitDB()
 	defer dbconn.Close()
 

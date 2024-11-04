@@ -10,9 +10,10 @@ import (
 )
 
 func CheckDeposit() {
+	fmt.Println("starting check deposit process")
+	dbconn := db.InitDB()
+	defer dbconn.Close()
 	for {
-		dbconn := db.InitDB()
-		defer dbconn.Close()
 		depositRequests := db.QueryDepositRequests(dbconn)
 
 		for _, request := range depositRequests {
