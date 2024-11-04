@@ -17,7 +17,6 @@ import (
 func initialize() {
 	utils.InitConfigFile()
 	utils.LoadBtcWallet(viper.GetString("wallet_name"))
-	utils.LoadBtcWallet(viper.GetString("signer_wallet_name"))
 	ethAccount := comms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
 	operator.RegisterOperator()
