@@ -62,7 +62,7 @@ func RegisterOperator() {
 	}
 
 	if !registeredOperator {
-		fmt.Println("Registering Operator to EigenLayer contracts")
+		fmt.Println("Registering Operator to EigenLayer")
 		tx, err := delegationManager.RegisterAsOperator(
 			auth,
 			operatorDetails,                     // operator address
