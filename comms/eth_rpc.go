@@ -78,7 +78,7 @@ func GetPrivateKeyFromKeyStore(account accounts.Account, passphrase string) (*ec
 	return nil, fmt.Errorf("account not found in keystore")
 }
 
-func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, amount uint64) (string, error) {
+func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, amount big.Int) (string, error) {
 
 	ethAccountOpr := LoadEthAccount()
 	client, err := GetEthClient()
@@ -134,20 +134,20 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		return "", err
 	}
 
-	b := new(big.Int).SetUint64(amount).Bytes()
-	// Pad to 32 bytes if needed
-	padded := make([]byte, 32)
-	copy(padded[32-len(b):], b)
+	bBytes := amount.Bytes()
+	paddedAmount := make([]byte, 32)
+	copy(paddedAmount[32-len(bBytes):], bBytes)
 
 	hash := crypto.Keccak256Hash(
 		common.HexToAddress(podAddress).Bytes(),
 		common.HexToAddress(oprAddr).Bytes(),
-		padded,
+		paddedAmount,
 		btcTxIdBytes,
 		[]byte{1}, // true is represented as 1 in byte form
 	)
 
 	fmt.Println("hash: ", hash)
+	fmt.Println(privateKey)
 
 	signature, err := crypto.Sign(hash.Bytes(), privateKey)
 	if err != nil {
@@ -166,7 +166,12 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		return "", err
 	}
 
-	fmt.Println("Transaction submitted: %s", tx.Hash().Hex())
+	pubkey, _ := crypto.Ecrecover(hash.Bytes(), signature)
+	fmt.Println("============")
+	fmt.Println(pubkey)
+	fmt.Println(hex.EncodeToString(pubkey))
+
+	fmt.Println("Transaction submitted: ", tx.Hash().Hex())
 	return tx.Hash().Hex(), nil
 }
 
