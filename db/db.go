@@ -121,7 +121,7 @@ func QueryUtxo(dbconn *sql.DB, address string) []types.Utxo {
 }
 
 func InsertDepositRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string, amount *big.Int) {
-	_, err := dbconn.Exec("INSERT into deposit_request VALUES ($1, $2, $3, $4, $5)",
+	_, err := dbconn.Exec("INSERT into deposit_requests VALUES ($1, $2, $3, $4, $5)",
 		podAddr,
 		operatorAddr,
 		txid,
@@ -134,9 +134,10 @@ func InsertDepositRequest(dbconn *sql.DB, podAddr string, operatorAddr string, t
 }
 
 func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositRequest {
-	DB_reader, err := dbconn.Query("select * from deposit_request where Archived = false")
+	DB_reader, err := dbconn.Query("select * from deposit_requests where Archived = false")
 	if err != nil {
 		fmt.Println("An error occured while query deposit request: ", err)
+		return nil
 	}
 
 	defer DB_reader.Close()
@@ -160,7 +161,7 @@ func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositRequest {
 }
 
 func MarkDepositRequestAsConfirmed(dbconn *sql.DB, txid string) {
-	_, err := dbconn.Exec("UPDATE deposit_request SET archived = true WHERE TransactionID = $1", txid)
+	_, err := dbconn.Exec("UPDATE deposit_requests SET archived = true WHERE TransactionID = $1", txid)
 	if err != nil {
 		fmt.Println("An error occured while updating deposit request query: ", err)
 	}
