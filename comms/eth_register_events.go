@@ -4,11 +4,14 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"log"
 
 	"github.com/AhmadAshraf2/Judge-AVS/PodManager"
 	"github.com/AhmadAshraf2/Judge-AVS/db"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/spf13/viper"
 )
 
@@ -16,14 +19,15 @@ func SubscribeToDepositRequests() {
 	// Create a new instance of the contract binding
 
 	oprEthAccount := LoadEthAccount()
-	client, err := GetEthClient()
+	client, err := rpc.Dial(viper.GetString("eth_ws_host"))
 	if err != nil {
-		fmt.Println("Failed to get eth client:", err)
-		panic(err)
+		log.Fatalf("Failed to connect to the Ethereum client: %v", err)
 	}
 
+	ethClient := ethclient.NewClient(client)
+
 	podManagerAddr := common.HexToAddress(viper.GetString("pod_manager_address"))
-	podManager, err := PodManager.NewPodManager(podManagerAddr, client)
+	podManager, err := PodManager.NewPodManager(podManagerAddr, ethClient)
 	if err != nil {
 		fmt.Println("Failed to instantiate contract:", err)
 		panic(err)
@@ -36,8 +40,8 @@ func SubscribeToDepositRequests() {
 	sub, err := podManager.WatchVerifyBitcoinDepositRequest(
 		&bind.WatchOpts{Context: context.Background()},
 		ch,
-		nil, // pod filter (nil means all pods)
-		nil, // operator filter (nil means all operators)
+		[]common.Address{podManagerAddr},
+		[]common.Address{oprEthAccount.Address},
 	)
 	if err != nil {
 		fmt.Println("Failed to subscribe to events:", err)
