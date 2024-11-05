@@ -29,7 +29,7 @@ func CheckDeposit() {
 			if err != nil {
 				continue
 			}
-
+			fmt.Println("found raw tx")
 			if tx.Confirmations <= 2 {
 				continue
 			}
