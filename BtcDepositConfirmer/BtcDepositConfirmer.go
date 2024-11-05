@@ -45,6 +45,7 @@ func CheckDeposit() {
 				fmt.Println("multisig address: ", multiSigAddress.Address)
 				for _, txOut := range tx.Vout {
 					fmt.Println("checking txout : ", txOut)
+					fmt.Println("checking txout hex: ", txOut.ScriptPubKey.Hex)
 					for _, address := range txOut.ScriptPubKey.Addresses {
 						fmt.Println("checking address: ", address)
 						if multiSigAddress.Address == address {
