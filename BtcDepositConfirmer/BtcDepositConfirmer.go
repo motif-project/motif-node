@@ -49,7 +49,7 @@ func CheckDeposit() {
 							bigInt := new(big.Int)
 							_, success := bigInt.SetString(request.Amount, 10)
 							if !success {
-								fmt.Print("Failed to convert string to big.Int")
+								fmt.Println("Failed to convert string to big.Int")
 								continue
 							}
 							_, err := ethComms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, *bigInt)

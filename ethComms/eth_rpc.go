@@ -82,6 +82,11 @@ func GetPrivateKeyFromKeyStore(account accounts.Account, passphrase string) (*ec
 
 func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, amount big.Int) (string, error) {
 
+	fmt.Println(podAddress)
+	fmt.Println(oprAddr)
+	fmt.Println(btcTxId)
+	fmt.Println(amount)
+
 	instance, privateKey, auth, err := initializeServiceManagerContract()
 
 	btcTxIdBytes, err := hex.DecodeString(btcTxId)
