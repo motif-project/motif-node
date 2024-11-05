@@ -11,7 +11,6 @@ import (
 	"os"
 
 	"github.com/AhmadAshraf2/Judge-AVS/BitDSMServiceManager"
-	"github.com/cosmos/btcutil/base58"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -166,7 +165,7 @@ func generateEthKeyPair() accounts.Account {
 	return account
 }
 
-func CallWithdrawBitcoinPSBT(podAddress string, oprAddr string, psbt string, amount big.Int) (string, error) {
+func CallWithdrawBitcoinPSBT(podAddress string, withdrawAddress string, psbt string, amount big.Int) (string, error) {
 
 	instance, privateKey, auth, err := initializeServiceManagerContract()
 
@@ -174,18 +173,25 @@ func CallWithdrawBitcoinPSBT(podAddress string, oprAddr string, psbt string, amo
 	paddedAmount := make([]byte, 32)
 	copy(paddedAmount[32-len(bBytes):], bBytes)
 
-	psbtBytes := base58.Decode(psbt)
-	if len(psbtBytes) == 0 {
-		fmt.Println("failed to decode PSBT")
-		return "", fmt.Errorf("failed to decode PSBT")
+	// psbtBytes := base58.Decode(psbt)
+	// if len(psbtBytes) == 0 {
+	// 	fmt.Println("failed to decode PSBT")
+	// 	return "", fmt.Errorf("failed to decode PSBT")
+	// }
+
+	psbtBytes := []byte(psbt)
+
+	withdrawAddressBytes, err := hex.DecodeString(withdrawAddress)
+	if err != nil {
+		fmt.Println("failed to decode withdraw address")
+		return "", err
 	}
 
 	hash := crypto.Keccak256Hash(
 		common.HexToAddress(podAddress).Bytes(),
-		common.HexToAddress(oprAddr).Bytes(),
 		paddedAmount,
 		psbtBytes,
-		[]byte{1}, // true is represented as 1 in byte form
+		withdrawAddressBytes,
 	)
 
 	hash = hashWithEthereumPrefix(hash)

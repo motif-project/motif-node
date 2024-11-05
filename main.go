@@ -23,7 +23,7 @@ func initialize() {
 	operator.RegisterOperator()
 
 	// bigAmount := new(big.Int).SetInt64(1000000)
-	// ethComms.CallConfirmBtcDeposit("0x6B3925c6CaC45b31192ed4fD9B05AC46E043fE58", "0x60b3b41240Fb9d353acE1E37B0CE79054154eA40", "d74b5d23c32f211a41db07e6fd8eba8cf1e9c3df9be7a9de172bbf52a7fb8a49", *bigAmount)
+	// ethComms.CallWithdrawBitcoinPSBT("0x6B3925c6CaC45b31192ed4fD9B05AC46E043fE58", "d4e358751808e039b16b3e946882aafd3e06c3c780c95723f0f6bd54fbae2696", "d74b5d23c32f211a41db07e6fd8eba8cf1e9c3df9be7a9de172bbf52a7fb8a49", *bigAmount)
 }
 
 func main() {
