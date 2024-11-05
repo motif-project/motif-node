@@ -40,13 +40,12 @@ func Server() {
 	router.HandleFunc("/eigen/node/services", ServicesHandler).Methods("GET")
 	router.HandleFunc("/eigen/node/services/{service_ID}/health", ServiceHealthHandler).Methods("GET")
 	router.HandleFunc("/eigen/get_address", GetAddressHandler).Methods("POST")
-	router.HandleFunc("/eigen/get_unsigned_psbt", GetUnSignedPsbtHandler).Methods("POST")
-	router.HandleFunc("/eigen/submit_signed_psbt", SubmitSignedPsbtHandler).Methods("POST")
+	router.HandleFunc("/eigen/signed_psbt", GetSignedPsbtHandler).Methods("POST")
 
 	http.ListenAndServe(":8080", router)
 }
 
-func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
+func GetSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		WithdrawAddr string `json:"withdrawAddr"`
 		EthAddr      string `json:"ethAddr"`
@@ -75,26 +74,7 @@ func GetUnSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(psbt))
-}
-
-func SubmitSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
-	var request struct {
-		Psbt string `json:"psbt"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-
-	if !utils.IsValidPsbt(request.Psbt) {
-		http.Error(w, "Invalid PSBT string", http.StatusBadRequest)
-		return
-	}
-
-	p, err := address.SubmitSignedPsbt(request.Psbt)
+	p, err := address.SignMultisigPSBT(psbt)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

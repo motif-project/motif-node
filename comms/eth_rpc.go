@@ -146,9 +146,6 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		[]byte{1}, // true is represented as 1 in byte form
 	)
 
-	fmt.Println("hash: ", hash)
-	fmt.Println(privateKey)
-
 	signature, err := crypto.Sign(hash.Bytes(), privateKey)
 	if err != nil {
 		fmt.Println("failed to sign hash: ", err)
@@ -165,14 +162,6 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		fmt.Println("failed to call confirmDeposit:", err)
 		return "", err
 	}
-
-	pubkey, err := crypto.Ecrecover(hash.Bytes(), signature)
-	if err != nil {
-		fmt.Println("failed to recover pubkey: ", err)
-	}
-	fmt.Println("============")
-	fmt.Println(pubkey)
-	fmt.Println(hex.EncodeToString(pubkey))
 
 	fmt.Println("Transaction submitted: ", tx.Hash().Hex())
 	return tx.Hash().Hex(), nil

@@ -11,13 +11,13 @@
     "btc_node_protocol" : "http://",
     "fee_rate_adjustment" : "10",
     "wallet_name": "online",
-    "judge_btc_wallet_name" : "rbf",
     "btc_xpublic_key": "[f2ee8d39/84h/0h/0h]xpub6BhivFwKw8faYQaQcmwhjchA1uHQk7vaXJtehCqdhP2x4ETZ6AgCUAPfVeFahDWRQVQ7JKoxoV8G16ji7xei48PcZkVf8hcjNkwKByBLH5J/0/*",
 
     "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
     "eth_ws_host" :"wss://ethereum-holesky-rpc.publicnode.com",
     "eth_keystore_dir": "keystore",
     "eth_keystore_password": "Persario_1",
+    
     "opr_metadata_uri" : "",
     "eigen_delegation_manager_address" : "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
     "bitdsm_registry_address": "0x9619e0b51531ba2607d55422d66b14c570d5de7a",

@@ -212,16 +212,6 @@ func GenerateBTCAddress(publicKey string, ethAddr string) (string, error) {
 	}
 	return newAddress, nil
 }
-
-func SubmitSignedPsbt(psbt string) (string, error) {
-	fmt.Println("inside submit signed psbt")
-	p, err := SignMultisigPSBT(psbt)
-	if err != nil {
-		return "", err
-	}
-	return p, nil
-}
-
 func GetUnsignedPsbt(withdrawBtcAddress string, ethAddr string) (string, error) {
 	// Here you can add your logic to get the unsigned PSBT
 	// For now, it just returns an empty string
