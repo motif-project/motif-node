@@ -272,4 +272,4 @@ The API server is used to create new multisig addresses and PSBTs. It is a simpl
 
 
 ## 7. DataBase Setup
-We use Postgres DB. once the DB is installed you can run the .db/schema.sql file. to create the tables.
+We use Postgres DB. Once the DB is installed you can run the .db/schema.sql file to create the tables.
