@@ -25,8 +25,10 @@ func CheckDeposit() {
 
 		for _, request := range depositRequests {
 			fmt.Println("found deposit requests")
+			fmt.Println("request: ", request.TransactionID)
 			tx, err := utils.GetRawTransaction(request.TransactionID)
 			if err != nil {
+				fmt.Println("Failed to get raw transaction: ", err)
 				continue
 			}
 			fmt.Println("found raw tx")
