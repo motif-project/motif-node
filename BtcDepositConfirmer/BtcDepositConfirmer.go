@@ -36,11 +36,16 @@ func CheckDeposit() {
 				continue
 			}
 
+			fmt.Println("tx confirmed")
+
 			multisigaddresses := db.QueryMultisigAddresses(dbconn)
 
 			for _, multiSigAddress := range multisigaddresses {
+				fmt.Println("multisig found")
+				fmt.Println("multisig address: ", multiSigAddress.Address)
 				for _, txOut := range tx.Vout {
 					for _, address := range txOut.ScriptPubKey.Addresses {
+						fmt.Println("checking address: ", address)
 						if multiSigAddress.Address == address {
 							fmt.Println("found my deposit requests")
 							bigInt := new(big.Int)
