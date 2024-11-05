@@ -47,6 +47,23 @@ func getBitcoinRpcClient() *rpcclient.Client {
 	return client
 }
 
+func getBitcoinRpcClientwithWallet(walletName string) *rpcclient.Client {
+	connCfg := &rpcclient.ConnConfig{
+		Host:         fmt.Sprintf("%s/wallet/%s", viper.GetString("btc_node_host"), walletName),
+		User:         viper.GetString("btc_node_user"),
+		Pass:         viper.GetString("btc_node_pass"),
+		HTTPPostMode: true,
+		DisableTLS:   true,
+	}
+
+	client, err := rpcclient.New(connCfg, nil)
+	if err != nil {
+		fmt.Println("Failed to connect to the Bitcoin client: ", err)
+	}
+
+	return client
+}
+
 func LoadBtcWallet(walletName string) {
 	client := getBitcoinRpcClient()
 	defer client.Shutdown()
@@ -180,7 +197,8 @@ func IsValidBtcAddress(address string) bool {
 	return false
 }
 func ListUnspentBtcUtxos(address string) ([]btcjson.ListUnspentResult, error) {
-	client := getBitcoinRpcClient()
+	walletName := viper.GetString("wallet_name")
+	client := getBitcoinRpcClientwithWallet(walletName)
 	defer client.Shutdown()
 
 	addr, err := btcutil.DecodeAddress(address, &chaincfg.RegressionNetParams)
