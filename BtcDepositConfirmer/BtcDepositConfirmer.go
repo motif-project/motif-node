@@ -17,7 +17,14 @@ func CheckDeposit() {
 	for {
 		depositRequests := db.QueryDepositRequests(dbconn)
 
+		if len(depositRequests) <= 0 {
+			fmt.Println("no deposit requests found")
+			time.Sleep(3 * time.Minute)
+			continue
+		}
+
 		for _, request := range depositRequests {
+			fmt.Println("found deposit requests")
 			tx, err := utils.GetRawTransaction(request.TransactionID)
 			if err != nil {
 				continue
@@ -33,8 +40,8 @@ func CheckDeposit() {
 				for _, txOut := range tx.Vout {
 					for _, address := range txOut.ScriptPubKey.Addresses {
 						if multiSigAddress.Address == address {
+							fmt.Println("found my deposit requests")
 							bigInt := new(big.Int)
-							// Convert the string to big.Int
 							_, success := bigInt.SetString(request.Amount, 10)
 							if !success {
 								fmt.Print("Failed to convert string to big.Int")
