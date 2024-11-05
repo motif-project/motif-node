@@ -36,7 +36,7 @@ func CheckDeposit() {
 				continue
 			}
 
-			fmt.Println("tx confirmed")
+			fmt.Println("tx confirmed : ", tx)
 
 			multisigaddresses := db.QueryMultisigAddresses(dbconn)
 
@@ -44,6 +44,7 @@ func CheckDeposit() {
 				fmt.Println("multisig found")
 				fmt.Println("multisig address: ", multiSigAddress.Address)
 				for _, txOut := range tx.Vout {
+					fmt.Println("checking txout : ")
 					for _, address := range txOut.ScriptPubKey.Addresses {
 						fmt.Println("checking address: ", address)
 						if multiSigAddress.Address == address {
