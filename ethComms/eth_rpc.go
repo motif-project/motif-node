@@ -85,7 +85,7 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 	fmt.Println(podAddress)
 	fmt.Println(oprAddr)
 	fmt.Println(btcTxId)
-	fmt.Println(amount)
+	fmt.Println(amount.String())
 
 	instance, privateKey, auth, err := initializeServiceManagerContract()
 
@@ -106,6 +106,8 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		btcTxIdBytes,
 		[]byte{1}, // true is represented as 1 in byte form
 	)
+
+	hash = hashWithEthereumPrefix(hash)
 
 	signature, err := signMessage(hash, privateKey)
 	if err != nil {
