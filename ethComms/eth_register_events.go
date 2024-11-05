@@ -109,7 +109,7 @@ func SubscribeToWithdrawRequests() {
 
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
-				// handleWithdrawalRequest(event)
+				handleWithdrawalRequest(event)
 				continue
 			}
 		}
@@ -117,7 +117,7 @@ func SubscribeToWithdrawRequests() {
 }
 
 func handleDepositRequest(event *PodManager.PodManagerVerifyBitcoinDepositRequest) {
-	fmt.Println("got an event with data : ", event.BitcoinDepositRequest)
+	fmt.Println("got a deposit event with data : ", event.BitcoinDepositRequest)
 	fmt.Println(event.Operator)
 	fmt.Println(event.Pod)
 	dbconn := db.InitDB()
@@ -133,6 +133,9 @@ func handleDepositRequest(event *PodManager.PodManagerVerifyBitcoinDepositReques
 }
 
 func handleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRequest) {
+	fmt.Println("got an withdrawal event with data : ", event.WithdrawAddress)
+	fmt.Println(event.Operator)
+	fmt.Println(event.Pod)
 	psbt, amount, err := address.GenerateMultisigwithdrawTx(hex.EncodeToString(event.WithdrawAddress), event.Pod.Hex())
 	if err != nil {
 		fmt.Println("Error generating psbt : ", err)
