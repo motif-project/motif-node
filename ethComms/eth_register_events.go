@@ -56,7 +56,7 @@ func SubscribeToDepositRequests() {
 	for {
 		select {
 		case err := <-sub.Err():
-			fmt.Println("Subscription error:", err)
+			fmt.Println("Subscription error deposit:", err)
 
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
@@ -105,7 +105,7 @@ func SubscribeToWithdrawRequests() {
 	for {
 		select {
 		case err := <-sub.Err():
-			fmt.Println("Subscription error:", err)
+			fmt.Println("Subscription error withdrawal:", err)
 
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
