@@ -1,6 +1,7 @@
 package ethComms
 
 import (
+	"bytes"
 	"context"
 	"crypto/ecdsa"
 	"encoding/hex"
@@ -102,28 +103,11 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		[]byte{1}, // true is represented as 1 in byte form
 	)
 
-	hash = hashWithEthereumPrefix(hash)
-	fmt.Println("hash: ", hash)
-
 	signature, err := signMessage(hash, privateKey)
 	if err != nil {
 		fmt.Println("failed to sign message: ", err)
 		return "", err
 	}
-
-	// b, e := crypto.Ecrecover(hash.Bytes(), signature)
-	// if e != nil {
-	// 	fmt.Println("failed to recover public key: ", e)
-	// 	return "", e
-	// }
-
-	// pubKey, err := crypto.UnmarshalPubkey(b)
-	// if err != nil {
-	// 	fmt.Println("failed to unmarshal public key: ", err)
-	// 	return "", err
-	// }
-	// crypto.CompressPubkey(pubKey)
-	// fmt.Println("public key: ", pubKey)
 
 	// Call the confirmDeposit function
 	tx, err := instance.ConfirmDeposit(auth, common.HexToAddress(podAddress), signature)
@@ -179,7 +163,6 @@ func generateEthKeyPair() accounts.Account {
 	if err != nil {
 		log.Fatalf("Failed to import private key: %v", err)
 	}
-
 	return account
 }
 
@@ -204,6 +187,8 @@ func CallWithdrawBitcoinPSBT(podAddress string, oprAddr string, psbt string, amo
 		psbtBytes,
 		[]byte{1}, // true is represented as 1 in byte form
 	)
+
+	hash = hashWithEthereumPrefix(hash)
 
 	signature, err := signMessage(hash, privateKey)
 	if err != nil {
@@ -295,3 +280,16 @@ func hashWithEthereumPrefix(hash common.Hash) common.Hash {
 	hashWithPrefix.Write(fullMessage)
 	return common.BytesToHash(hashWithPrefix.Sum(nil))
 }
+
+func concatenateBytes(byteSlices ...[]byte) []byte {
+	var buffer bytes.Buffer
+
+	for _, b := range byteSlices {
+		buffer.Write(b)
+	}
+
+	return buffer.Bytes()
+}
+
+// 6b3925c6cac45b31192ed4fd9b05ac46e043fe5860b3b41240fb9d353ace1e37b0ce79054154ea4000000000000000000000000000000000000000000000000000000000000f42406437346235643233633332663231316134316462303765366664386562613863663165396333646639626537613964653137326262663532613766623861343901
+// 6b3925c6cac45b31192ed4fd9b05ac46e043fe5860b3b41240fb9d353ace1e37b0ce79054154ea4000000000000000000000000000000000000000000000000000000000000f4240d74b5d23c32f211a41db07e6fd8eba8cf1e9c3df9be7a9de172bbf52a7fb8a4901
