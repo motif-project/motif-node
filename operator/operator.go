@@ -12,7 +12,7 @@ import (
 	"github.com/AhmadAshraf2/Judge-AVS/AvsDirectory"
 	"github.com/AhmadAshraf2/Judge-AVS/BitdsmRegistry"
 	"github.com/AhmadAshraf2/Judge-AVS/DelegationManager"
-	"github.com/AhmadAshraf2/Judge-AVS/comms"
+	"github.com/AhmadAshraf2/Judge-AVS/ethComms"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -20,13 +20,13 @@ import (
 )
 
 func RegisterOperator() {
-	client, err := comms.GetEthClient()
+	client, err := ethComms.GetEthClient()
 	if err != nil {
 		fmt.Println("Failed to get eth client: ", err)
 	}
 
-	ethAccountOpr := comms.LoadEthAccount()
-	privateKey, err := comms.GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_password"))
+	ethAccountOpr := ethComms.LoadEthAccount()
+	privateKey, err := ethComms.GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_password"))
 	if err != nil {
 		fmt.Println("Failed to get private key: ", err)
 	}

@@ -40,54 +40,15 @@ func Server() {
 	router.HandleFunc("/eigen/node/services", ServicesHandler).Methods("GET")
 	router.HandleFunc("/eigen/node/services/{service_ID}/health", ServiceHealthHandler).Methods("GET")
 	router.HandleFunc("/eigen/get_address", GetAddressHandler).Methods("POST")
-	router.HandleFunc("/eigen/signed_psbt", GetSignedPsbtHandler).Methods("POST")
+	// router.HandleFunc("/eigen/signed_psbt", GetSignedPsbtHandler).Methods("POST")
 
 	http.ListenAndServe(":8080", router)
 }
 
-func GetSignedPsbtHandler(w http.ResponseWriter, r *http.Request) {
-	var request struct {
-		WithdrawAddr string `json:"withdrawAddr"`
-		EthAddr      string `json:"ethAddr"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
-		return
-	}
-
-	fmt.Println("eth address : ", request.EthAddr)
-
-	if !utils.IsValidEthAddress(request.EthAddr) {
-		http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
-		return
-	}
-
-	if !utils.IsValidBtcAddress(request.WithdrawAddr) {
-		http.Error(w, "Invalid withdraw Btc Address", http.StatusBadRequest)
-		return
-	}
-
-	psbt, err := address.GetUnsignedPsbt(request.WithdrawAddr, request.EthAddr)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	p, err := address.SignMultisigPSBT(psbt)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(p))
-}
-
 func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		PubKey  string `json:"pubKey"`
-		EthAddr string `json:"ethAddr"`
+		PubKey     string `json:"pubKey"`
+		PodEthAddr string `json:"podEthAddr"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -95,15 +56,15 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if !utils.IsValidBtcPubKey(request.PubKey) {
-	// 	http.Error(w, "Invalid Bitcoin public key", http.StatusBadRequest)
-	// 	return
-	// }
-	if !utils.IsValidEthAddress(request.EthAddr) {
+	if !utils.IsValidBtcPubKey(request.PubKey) {
+		http.Error(w, "Invalid Bitcoin public key", http.StatusBadRequest)
+		return
+	}
+	if !utils.IsValidEthAddress(request.PodEthAddr) {
 		http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
 		return
 	}
-	newAddress, err := address.GenerateBTCAddress(request.PubKey, request.EthAddr)
+	newAddress, err := address.GenerateSimpleMultisigAddress(request.PubKey, request.PodEthAddr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
@@ -113,11 +74,11 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	service1, service2 := runHealthCheck()
-	if service1 && service2 {
+	service1 := runHealthCheck()
+	if service1 {
 		w.WriteHeader(http.StatusOK)
 		return
-	} else if !service1 && !service2 {
+	} else if !service1 {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
@@ -147,7 +108,7 @@ func NodeHandler(w http.ResponseWriter, r *http.Request) {
 func ServicesHandler(w http.ResponseWriter, r *http.Request) {
 	services := []Service{}
 
-	service1, service2 := runHealthCheck()
+	service1 := runHealthCheck()
 
 	status := "Down"
 	if service1 {
@@ -160,18 +121,6 @@ func ServicesHandler(w http.ResponseWriter, r *http.Request) {
 		Status:      status,
 	}
 
-	services = append(services, service)
-
-	status = "Down"
-	if service2 {
-		status = "Up"
-	}
-	service = Service{
-		ID:          "2",
-		Name:        "ForkScanner",
-		Description: "ForkScanner",
-		Status:      status,
-	}
 	services = append(services, service)
 
 	response := map[string][]Service{
@@ -193,13 +142,8 @@ func ServiceHealthHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	serviceID := vars["service_ID"]
 
-	service1, service2 := runHealthCheck()
+	service1 := runHealthCheck()
 	if serviceID == "1" && service1 {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
-	if serviceID == "2" && service2 {
 		w.WriteHeader(http.StatusOK)
 		return
 	}

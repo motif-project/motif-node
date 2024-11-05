@@ -12,6 +12,7 @@
     "fee_rate_adjustment" : "10",
     "wallet_name": "online",
     "btc_xpublic_key": "[f2ee8d39/84h/0h/0h]xpub6BhivFwKw8faYQaQcmwhjchA1uHQk7vaXJtehCqdhP2x4ETZ6AgCUAPfVeFahDWRQVQ7JKoxoV8G16ji7xei48PcZkVf8hcjNkwKByBLH5J/0/*",
+    "btc_public_key": "",
 
     "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
     "eth_ws_host" :"wss://ethereum-holesky-rpc.publicnode.com",

@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"log"
 
-	"github.com/AhmadAshraf2/Judge-AVS/comms"
+	"github.com/AhmadAshraf2/Judge-AVS/btcComms"
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chaincfg"
@@ -96,7 +97,7 @@ func GetRawTransaction(txid string) (*btcjson.TxRawResult, error) {
 func GetFeeFromBtcNode(tx *wire.MsgTx) (int64, error) {
 	walletName := viper.GetString("wallet_name")
 	feeRateAdjustment := viper.GetInt64("fee_rate_adjustment")
-	result, err := comms.GetEstimateFee(walletName)
+	result, err := btcComms.GetEstimateFee(walletName)
 	if err != nil {
 		fmt.Println("Error getting fee rate : ", err)
 		return 0, err
@@ -177,4 +178,20 @@ func IsValidBtcAddress(address string) bool {
 		return true
 	}
 	return false
+}
+func ListUnspentBtcUtxos(address string) ([]btcjson.ListUnspentResult, error) {
+	client := getBitcoinRpcClient()
+	defer client.Shutdown()
+
+	addr, err := btcutil.DecodeAddress(address, &chaincfg.RegressionNetParams)
+	if err != nil {
+		log.Fatalf("Invalid Bitcoin address: %v", err)
+	}
+
+	unspent, err := client.ListUnspentMinMaxAddresses(3, 9999999, []btcutil.Address{addr})
+	if err != nil {
+		fmt.Println("Error listing unspent outputs: ", err)
+		return nil, err
+	}
+	return unspent, nil
 }

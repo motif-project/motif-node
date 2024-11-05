@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/AhmadAshraf2/Judge-AVS/comms"
 	"github.com/AhmadAshraf2/Judge-AVS/db"
+	"github.com/AhmadAshraf2/Judge-AVS/ethComms"
 	"github.com/AhmadAshraf2/Judge-AVS/utils"
 )
 
@@ -32,7 +32,7 @@ func CheckDeposit() {
 				for _, txOut := range tx.Vout {
 					for _, address := range txOut.ScriptPubKey.Addresses {
 						if multiSigAddress.Address == address {
-							_, err := comms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, *request.Amount)
+							_, err := ethComms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, *request.Amount)
 							if err != nil {
 								fmt.Println("Failed to call confirm btc deposit: ", err)
 								continue

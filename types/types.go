@@ -12,7 +12,7 @@ type WatchtowerTxInput struct {
 type MultiSigAddress struct {
 	Address    string
 	Script     string
-	EthAddress string
+	PodAddress string
 	Signed     bool
 	Archived   bool
 }
@@ -26,15 +26,6 @@ type Utxo struct {
 type BtcPubkeyArgs struct {
 	BTCPubKey string
 	EthAddr   string
-}
-
-type GetUnsignedPsbtArgs struct {
-	EthAddr         string
-	WithdrawBtcAddr string
-}
-
-type SubmitSignedPSBT struct {
-	Psbt string
 }
 
 type BtcDepositRequest struct {

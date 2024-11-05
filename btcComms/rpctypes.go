@@ -1,4 +1,4 @@
-package comms
+package btcComms
 
 type JSONRPCRequest struct {
 	ID      int64       `json:"id"`

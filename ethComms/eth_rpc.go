@@ -1,4 +1,4 @@
-package comms
+package ethComms
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/AhmadAshraf2/Judge-AVS/BitDSMServiceManager"
+	"github.com/cosmos/btcutil/base58"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -17,6 +18,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/sha3"
 )
 
 func GetEthClient() (*ethclient.Client, error) {
@@ -80,53 +82,7 @@ func GetPrivateKeyFromKeyStore(account accounts.Account, passphrase string) (*ec
 
 func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, amount big.Int) (string, error) {
 
-	ethAccountOpr := LoadEthAccount()
-	client, err := GetEthClient()
-	if err != nil {
-		fmt.Println("Failed to get eth client: ", err)
-		return "", err
-	}
-
-	contractAddress := common.HexToAddress(viper.GetString("service_manager_address"))
-	instance, err := BitDSMServiceManager.NewBitDSMServiceManager(contractAddress, client)
-	if err != nil {
-		fmt.Println("Failed to create contract instance: %v", err)
-		return "", err
-	}
-
-	privateKey, err := GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_password"))
-	if err != nil {
-		fmt.Println("Failed to get private key: ", err)
-		return "", err
-	}
-
-	nonce, err := client.PendingNonceAt(context.Background(), ethAccountOpr.Address)
-	if err != nil {
-		fmt.Println("Failed to get nonce: %v", err)
-		return "", err
-	}
-	gasPrice, err := client.SuggestGasPrice(context.Background())
-	if err != nil {
-		return "", err
-	}
-
-	// Get the chain ID
-	chainID, err := client.ChainID(context.Background())
-	if err != nil {
-		fmt.Println("failed to get chain ID: ", err)
-		return "", err
-	}
-
-	// Create the auth object
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
-	if err != nil {
-		fmt.Println("failed to create transactor: ", err)
-		return "", err
-	}
-	auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)      // in wei
-	auth.GasLimit = uint64(3000000) // in units
-	auth.GasPrice = gasPrice
+	instance, privateKey, auth, err := initializeServiceManagerContract()
 
 	btcTxIdBytes, err := hex.DecodeString(btcTxId)
 	if err != nil {
@@ -146,15 +102,28 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		[]byte{1}, // true is represented as 1 in byte form
 	)
 
-	signature, err := crypto.Sign(hash.Bytes(), privateKey)
+	hash = hashWithEthereumPrefix(hash)
+	fmt.Println("hash: ", hash)
+
+	signature, err := signMessage(hash, privateKey)
 	if err != nil {
-		fmt.Println("failed to sign hash: ", err)
+		fmt.Println("failed to sign message: ", err)
 		return "", err
 	}
 
-	if signature[64] < 27 {
-		signature[64] += 27
-	}
+	// b, e := crypto.Ecrecover(hash.Bytes(), signature)
+	// if e != nil {
+	// 	fmt.Println("failed to recover public key: ", e)
+	// 	return "", e
+	// }
+
+	// pubKey, err := crypto.UnmarshalPubkey(b)
+	// if err != nil {
+	// 	fmt.Println("failed to unmarshal public key: ", err)
+	// 	return "", err
+	// }
+	// crypto.CompressPubkey(pubKey)
+	// fmt.Println("public key: ", pubKey)
 
 	// Call the confirmDeposit function
 	tx, err := instance.ConfirmDeposit(auth, common.HexToAddress(podAddress), signature)
@@ -163,7 +132,7 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 		return "", err
 	}
 
-	fmt.Println("Transaction submitted: ", tx.Hash().Hex())
+	fmt.Println("Transaction deposit submitted: ", tx.Hash().Hex())
 	return tx.Hash().Hex(), nil
 }
 
@@ -212,4 +181,117 @@ func generateEthKeyPair() accounts.Account {
 	}
 
 	return account
+}
+
+func CallWithdrawBitcoinPSBT(podAddress string, oprAddr string, psbt string, amount big.Int) (string, error) {
+
+	instance, privateKey, auth, err := initializeServiceManagerContract()
+
+	bBytes := amount.Bytes()
+	paddedAmount := make([]byte, 32)
+	copy(paddedAmount[32-len(bBytes):], bBytes)
+
+	psbtBytes := base58.Decode(psbt)
+	if len(psbtBytes) == 0 {
+		fmt.Println("failed to decode PSBT")
+		return "", fmt.Errorf("failed to decode PSBT")
+	}
+
+	hash := crypto.Keccak256Hash(
+		common.HexToAddress(podAddress).Bytes(),
+		common.HexToAddress(oprAddr).Bytes(),
+		paddedAmount,
+		psbtBytes,
+		[]byte{1}, // true is represented as 1 in byte form
+	)
+
+	signature, err := signMessage(hash, privateKey)
+	if err != nil {
+		fmt.Println("failed to sign message: ", err)
+		return "", err
+	}
+
+	// Call the confirmDeposit function
+	tx, err := instance.WithdrawBitcoinPSBT(auth, common.HexToAddress(podAddress), &amount, psbtBytes, signature)
+	if err != nil {
+		fmt.Println("failed to call Withdraw psbt:", err)
+		return "", err
+	}
+
+	fmt.Println("Transaction withdraw submitted: ", tx.Hash().Hex())
+	return tx.Hash().Hex(), nil
+
+}
+
+func initializeServiceManagerContract() (*BitDSMServiceManager.BitDSMServiceManager, *ecdsa.PrivateKey, *bind.TransactOpts, error) {
+	ethAccountOpr := LoadEthAccount()
+	client, err := GetEthClient()
+	if err != nil {
+		fmt.Println("Failed to get eth client: ", err)
+		return nil, nil, nil, err
+	}
+
+	contractAddress := common.HexToAddress(viper.GetString("service_manager_address"))
+	instance, err := BitDSMServiceManager.NewBitDSMServiceManager(contractAddress, client)
+	if err != nil {
+		fmt.Println("Failed to create contract instance: %v", err)
+		return nil, nil, nil, err
+	}
+
+	privateKey, err := GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_password"))
+	if err != nil {
+		fmt.Println("Failed to get private key: ", err)
+		return nil, nil, nil, err
+	}
+
+	nonce, err := client.PendingNonceAt(context.Background(), ethAccountOpr.Address)
+	if err != nil {
+		fmt.Println("Failed to get nonce: %v", err)
+		return nil, nil, nil, err
+	}
+	gasPrice, err := client.SuggestGasPrice(context.Background())
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	// Get the chain ID
+	chainID, err := client.ChainID(context.Background())
+	if err != nil {
+		fmt.Println("failed to get chain ID: ", err)
+		return nil, nil, nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
+	if err != nil {
+		fmt.Println("failed to create transactor: ", err)
+		return nil, nil, nil, err
+	}
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0)      // in wei
+	auth.GasLimit = uint64(3000000) // in units
+	auth.GasPrice = gasPrice
+
+	return instance, privateKey, auth, nil
+}
+
+func signMessage(hash common.Hash, privateKey *ecdsa.PrivateKey) ([]byte, error) {
+	signature, err := crypto.Sign(hash.Bytes(), privateKey)
+	if err != nil {
+		fmt.Println("failed to sign hash: ", err)
+		return nil, err
+	}
+
+	if signature[64] < 27 {
+		signature[64] += 27
+	}
+	return signature, nil
+}
+
+func hashWithEthereumPrefix(hash common.Hash) common.Hash {
+	prefix := []byte("\x19Ethereum Signed Message:\n32")
+	fullMessage := append(prefix, hash.Bytes()...)
+
+	hashWithPrefix := sha3.NewLegacyKeccak256()
+	hashWithPrefix.Write(fullMessage)
+	return common.BytesToHash(hashWithPrefix.Sum(nil))
 }

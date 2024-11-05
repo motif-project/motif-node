@@ -21,7 +21,7 @@ func InitDB() *sql.DB {
 	return db
 }
 
-func InsertMultiSigAddress(dbconn *sql.DB, address string, script string, ethAddr string) {
+func InsertMultiSigAddress(dbconn *sql.DB, address string, script string, ethAddr string) error {
 	_, err := dbconn.Exec("INSERT into multi_sig_address VALUES ($1, $2, $3, $4, $5)",
 		address,
 		script,
@@ -31,14 +31,16 @@ func InsertMultiSigAddress(dbconn *sql.DB, address string, script string, ethAdd
 	)
 	if err != nil {
 		fmt.Println("An error occured while executing insert multi sig address query: ", err)
+		return err
 	}
+	return nil
 }
 
-func QueryMultisigAddressByEthAddress(dbconn *sql.DB, ethAddr string) []types.MultiSigAddress {
+func QueryMultisigAddressByPodAddress(dbconn *sql.DB, ethAddr string) []types.MultiSigAddress {
 	// fmt.Println("getting address for height: ", height)
 	var DB_reader *sql.Rows
 	var err error
-	DB_reader, err = dbconn.Query("select * from multi_sig_address where ethaddress = $1 and archived = false", ethAddr)
+	DB_reader, err = dbconn.Query("select * from multi_sig_address where podaddress = $1 and archived = false", ethAddr)
 
 	if err != nil {
 		fmt.Println("An error occured while query address by Eth Address: ", err)
@@ -52,7 +54,7 @@ func QueryMultisigAddressByEthAddress(dbconn *sql.DB, ethAddr string) []types.Mu
 		err := DB_reader.Scan(
 			&address.Address,
 			&address.Script,
-			&address.EthAddress,
+			&address.PodAddress,
 			&address.Signed,
 			&address.Archived,
 		)
@@ -83,7 +85,7 @@ func QueryMultisigAddresses(dbconn *sql.DB) []types.MultiSigAddress {
 		err := DB_reader.Scan(
 			&address.Address,
 			&address.Script,
-			&address.EthAddress,
+			&address.PodAddress,
 			&address.Signed,
 			&address.Archived,
 		)
@@ -94,30 +96,6 @@ func QueryMultisigAddresses(dbconn *sql.DB) []types.MultiSigAddress {
 	}
 
 	return addresses
-}
-
-func QueryUtxo(dbconn *sql.DB, address string) []types.Utxo {
-	DB_reader, err := dbconn.Query("select txid, Receiving_vout, satoshis from notification where receiving = $1", address)
-	if err != nil {
-		fmt.Println("An error occured while query utxo: ", err)
-	}
-
-	defer DB_reader.Close()
-	utxos := make([]types.Utxo, 0)
-
-	for DB_reader.Next() {
-		utxo := types.Utxo{}
-		err := DB_reader.Scan(
-			&utxo.Txid,
-			&utxo.Vout,
-			&utxo.Amount,
-		)
-		if err != nil {
-			fmt.Println(err)
-		}
-		utxos = append(utxos, utxo)
-	}
-	return utxos
 }
 
 func InsertDepositRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string, amount *big.Int) {

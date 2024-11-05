@@ -53,28 +53,6 @@ func checkBtcNodeHealth() bool {
 	return true
 }
 
-func checkForkscannerHealth() bool {
-	ipaddress := viper.GetString("forkscanner_host")
-	port := viper.GetString("forkscanner_rpc_port")
-	url := fmt.Sprintf("http://%v:%v", ipaddress, port)
-	payload := `{"jsonrpc": "2.0", "id": 1, "method": "get_tips", "params": null}`
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(payload)))
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	defer resp.Body.Close()
-	return true
-}
-
-func runHealthCheck() (bool, bool) {
-	return checkBtcNodeHealth(), checkForkscannerHealth()
+func runHealthCheck() bool {
+	return checkBtcNodeHealth()
 }
