@@ -33,6 +33,8 @@ func main() {
 	go api.Server()
 	wg.Add(1)
 	go BtcDepositConfirmer.CheckDeposit()
-	ethComms.SubscribeToDepositRequests()
+	wg.Add(1)
+	go ethComms.SubscribeToDepositRequests()
+	ethComms.SubscribeToWithdrawRequests()
 	wg.Wait()
 }
