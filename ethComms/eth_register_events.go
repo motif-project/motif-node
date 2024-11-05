@@ -109,7 +109,7 @@ func SubscribeToWithdrawRequests() {
 
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
-				handleWithdrawalRequest(event)
+				HandleWithdrawalRequest(event)
 				continue
 			}
 		}
@@ -132,7 +132,7 @@ func handleDepositRequest(event *PodManager.PodManagerVerifyBitcoinDepositReques
 
 }
 
-func handleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRequest) {
+func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRequest) {
 	fmt.Println("got an withdrawal event with data : ", event.WithdrawAddress)
 	fmt.Println(event.Operator)
 	fmt.Println(event.Pod)

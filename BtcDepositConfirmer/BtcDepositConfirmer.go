@@ -57,6 +57,7 @@ func CheckDeposit() {
 								fmt.Println("Failed to call confirm btc deposit: ", err)
 								continue
 							}
+							db.UpdateMultiSigAddressPod(dbconn, multiSigAddress.Address, request.PodAddress)
 							db.MarkDepositRequestAsConfirmed(dbconn, request.TransactionID)
 						}
 					}

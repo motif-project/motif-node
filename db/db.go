@@ -21,11 +21,23 @@ func InitDB() *sql.DB {
 	return db
 }
 
+func UpdateMultiSigAddressPod(dbconn *sql.DB, address string, podaddress string) error {
+	_, err := dbconn.Exec("UPDATE multi_sig_address SET podaddress = $1 WHERE address = $2",
+		podaddress,
+		address,
+	)
+	if err != nil {
+		fmt.Println("An error occurred while executing update multi sig address query: ", err)
+		return err
+	}
+	return nil
+}
+
 func InsertMultiSigAddress(dbconn *sql.DB, address string, script string, ethAddr string) error {
 	_, err := dbconn.Exec("INSERT into multi_sig_address VALUES ($1, $2, $3, $4, $5)",
 		address,
 		script,
-		ethAddr,
+		nil,
 		false,
 		false,
 	)
@@ -36,11 +48,11 @@ func InsertMultiSigAddress(dbconn *sql.DB, address string, script string, ethAdd
 	return nil
 }
 
-func QueryMultisigAddressByPodAddress(dbconn *sql.DB, ethAddr string) []types.MultiSigAddress {
+func QueryMultisigAddressByPodAddress(dbconn *sql.DB, podAddr string) []types.MultiSigAddress {
 	// fmt.Println("getting address for height: ", height)
 	var DB_reader *sql.Rows
 	var err error
-	DB_reader, err = dbconn.Query("select * from multi_sig_address where podaddress = $1 and archived = false", ethAddr)
+	DB_reader, err = dbconn.Query("select * from multi_sig_address where podaddress = $1 and archived = false", podAddr)
 
 	if err != nil {
 		fmt.Println("An error occured while query address by Eth Address: ", err)
