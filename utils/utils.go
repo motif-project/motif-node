@@ -15,7 +15,6 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/btcsuite/btcutil/bech32"
 	"github.com/btcsuite/btcutil/psbt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
@@ -197,20 +196,51 @@ func ListUnspentBtcUtxos(address string) ([]btcjson.ListUnspentResult, error) {
 	return unspent, nil
 }
 
-func Bech32ToHex(bech32Address string) (string, error) {
-	// Decode the Bech32 address
-	_, data, err := bech32.Decode(bech32Address)
+func Bech32ToHex(bech32Addr string) (string, error) {
+	// Decode the bech32 address
+	addr, err := btcutil.DecodeAddress(bech32Addr, &chaincfg.MainNetParams)
 	if err != nil {
-		return "", fmt.Errorf("failed to decode Bech32 address: %w", err)
+		return "", fmt.Errorf("failed to decode bech32 address: %v", err)
 	}
 
-	// Convert the data part to a byte array
-	byteArray, err := bech32.ConvertBits(data, 5, 8, false)
-	if err != nil {
-		return "", fmt.Errorf("failed to convert Bech32 data to byte array: %w", err)
+	// Handle different witness address types
+	var witnessProgram []byte
+	switch a := addr.(type) {
+	case *btcutil.AddressWitnessPubKeyHash:
+		witnessProgram = a.WitnessProgram()
+	case *btcutil.AddressWitnessScriptHash:
+		witnessProgram = a.WitnessProgram()
+	default:
+		return "", fmt.Errorf("unsupported address type: %T", addr)
 	}
 
-	// Convert the byte array to a hexadecimal string
-	hexString := hex.EncodeToString(byteArray)
-	return hexString, nil
+	// Convert to hex
+	hexAddr := hex.EncodeToString(witnessProgram)
+
+	return hexAddr, nil
+}
+
+func HexToBech32(hexAddr string, network *chaincfg.Params) (string, error) {
+	// Decode hex string to bytes
+	decoded, err := hex.DecodeString(hexAddr)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode hex string: %v", err)
+	}
+
+	// Create appropriate address based on the length of the decoded bytes
+	var addr btcutil.Address
+	switch len(decoded) {
+	case 20: // P2WPKH (20 bytes)
+		addr, err = btcutil.NewAddressWitnessPubKeyHash(decoded, network)
+	case 32: // P2WSH (32 bytes)
+		addr, err = btcutil.NewAddressWitnessScriptHash(decoded, network)
+	default:
+		return "", fmt.Errorf("invalid decoded length: got %d, want 20 or 32", len(decoded))
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create bech32 address: %v", err)
+	}
+
+	return addr.String(), nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/AhmadAshraf2/Judge-AVS/btcComms"
 	"github.com/AhmadAshraf2/Judge-AVS/db"
 	"github.com/AhmadAshraf2/Judge-AVS/utils"
+	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/spf13/viper"
 )
@@ -98,10 +99,15 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 
 	totalAmountInBTC := utils.SatsToBtc(int64(totalAmountTxIn))
 
-	fmt.Println("withdraw btc addr : ", withdrawBTCAddress)
+	withdrawAddr, err := utils.HexToBech32(withdrawBTCAddress, &chaincfg.SigNetParams)
+	if err != nil {
+		fmt.Println("error in converting to bech32 : ", err)
+		return "", 0, err
+	}
+	fmt.Println("withdraw btc addr : ", withdrawAddr)
 	fmt.Println("total amount in BTC: ", totalAmountInBTC)
 
-	outputs = append(outputs, btcComms.TxOutput{withdrawBTCAddress: totalAmountInBTC})
+	outputs = append(outputs, btcComms.TxOutput{withdrawAddr: totalAmountInBTC})
 
 	hexTx, err := btcComms.CreateRawTx(inputs, outputs, 0, wallet)
 	if err != nil {
@@ -125,7 +131,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
-	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawBTCAddress: totalAmountInBTC}}
+	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawAddr: totalAmountInBTC}}
 
 	p, err := btcComms.CreatePsbt(inputs, outputs, 0, wallet)
 	if err != nil {
