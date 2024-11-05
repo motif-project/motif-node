@@ -140,7 +140,7 @@ func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositRequest {
 }
 
 func MarkDepositRequestAsConfirmed(dbconn *sql.DB, txid string) {
-	_, err := dbconn.Exec("UPDATE deposit_requests SET archived = true WHERE TransactionID = $1", txid)
+	_, err := dbconn.Exec("UPDATE deposit_requests SET archived = true WHERE transaction_id = $1", txid)
 	if err != nil {
 		fmt.Println("An error occured while updating deposit request query: ", err)
 	}
