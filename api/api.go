@@ -68,8 +68,26 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+
+	addressHex, err := utils.Bech32ToHex(newAddress)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	response := map[string]string{
+		"newAddress": newAddress,
+		"addressHex": addressHex,
+	}
+
+	responseJSON, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(newAddress))
+	w.Write([]byte(responseJSON))
 	return
 }
 

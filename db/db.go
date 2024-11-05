@@ -99,11 +99,12 @@ func QueryMultisigAddresses(dbconn *sql.DB) []types.MultiSigAddress {
 }
 
 func InsertDepositRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string, amount *big.Int) {
+	amountStr := amount.String()
 	_, err := dbconn.Exec("INSERT into deposit_requests VALUES ($1, $2, $3, $4, $5)",
 		podAddr,
 		operatorAddr,
 		txid,
-		amount,
+		amountStr,
 		false,
 	)
 	if err != nil {

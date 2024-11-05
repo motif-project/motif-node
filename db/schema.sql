@@ -28,7 +28,7 @@ CREATE TABLE public.deposit_requests (
     pod_address character varying(42) NOT NULL,
     operator_address character varying(42) NOT NULL,
     transaction_id character varying(64) NOT NULL,
-    amount numeric NOT NULL,
+    amount  varchar NOT NULL,
     archived boolean NOT NULL
 );
 

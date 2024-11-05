@@ -2,6 +2,7 @@ package BtcDepositConfirmer
 
 import (
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/AhmadAshraf2/Judge-AVS/db"
@@ -32,7 +33,14 @@ func CheckDeposit() {
 				for _, txOut := range tx.Vout {
 					for _, address := range txOut.ScriptPubKey.Addresses {
 						if multiSigAddress.Address == address {
-							_, err := ethComms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, *request.Amount)
+							bigInt := new(big.Int)
+							// Convert the string to big.Int
+							_, success := bigInt.SetString(request.Amount, 10)
+							if !success {
+								fmt.Print("Failed to convert string to big.Int")
+								continue
+							}
+							_, err := ethComms.CallConfirmBtcDeposit(request.PodAddress, request.OperatorAddress, request.TransactionID, *bigInt)
 							if err != nil {
 								fmt.Println("Failed to call confirm btc deposit: ", err)
 								continue

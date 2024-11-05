@@ -14,8 +14,9 @@ import (
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
+	"github.com/btcsuite/btcutil/base58"
+	"github.com/btcsuite/btcutil/bech32"
 	"github.com/btcsuite/btcutil/psbt"
-	"github.com/cosmos/btcutil/base58"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
 )
@@ -194,4 +195,22 @@ func ListUnspentBtcUtxos(address string) ([]btcjson.ListUnspentResult, error) {
 		return nil, err
 	}
 	return unspent, nil
+}
+
+func Bech32ToHex(bech32Address string) (string, error) {
+	// Decode the Bech32 address
+	_, data, err := bech32.Decode(bech32Address)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode Bech32 address: %w", err)
+	}
+
+	// Convert the data part to a byte array
+	byteArray, err := bech32.ConvertBits(data, 5, 8, false)
+	if err != nil {
+		return "", fmt.Errorf("failed to convert Bech32 data to byte array: %w", err)
+	}
+
+	// Convert the byte array to a hexadecimal string
+	hexString := hex.EncodeToString(byteArray)
+	return hexString, nil
 }
