@@ -7,11 +7,11 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 
-	"github.com/AhmadAshraf2/Judge-AVS/BtcDepositConfirmer"
-	"github.com/AhmadAshraf2/Judge-AVS/api"
-	"github.com/AhmadAshraf2/Judge-AVS/ethComms"
-	"github.com/AhmadAshraf2/Judge-AVS/operator"
-	"github.com/AhmadAshraf2/Judge-AVS/utils"
+	"github.com/AhmadAshraf2/BitDSM-Node/BtcDepositConfirmer"
+	"github.com/AhmadAshraf2/BitDSM-Node/api"
+	"github.com/AhmadAshraf2/BitDSM-Node/ethComms"
+	"github.com/AhmadAshraf2/BitDSM-Node/operator"
+	"github.com/AhmadAshraf2/BitDSM-Node/utils"
 )
 
 func initialize() {

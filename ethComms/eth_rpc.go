@@ -10,7 +10,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/AhmadAshraf2/Judge-AVS/BitDSMServiceManager"
+	"github.com/AhmadAshraf2/BitDSM-Node/BitDSMServiceManager"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"

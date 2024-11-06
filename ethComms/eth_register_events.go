@@ -7,9 +7,9 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/AhmadAshraf2/Judge-AVS/PodManager"
-	"github.com/AhmadAshraf2/Judge-AVS/address"
-	"github.com/AhmadAshraf2/Judge-AVS/db"
+	"github.com/AhmadAshraf2/BitDSM-Node/PodManager"
+	"github.com/AhmadAshraf2/BitDSM-Node/address"
+	"github.com/AhmadAshraf2/BitDSM-Node/db"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
