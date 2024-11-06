@@ -126,10 +126,10 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 	return tx.Hash().Hex(), nil
 }
 
-func CallConfirmBtcWithdraw(podAddress string, oprAddr string, btcTxId string) (string, error) {
+func CallConfirmBtcWithdraw(podAddress string, oprAddr string, txHex string, withdrawAddr []byte) (string, error) {
 	instance, privateKey, auth, err := initializeServiceManagerContract()
 
-	btcTxIdBytes, err := hex.DecodeString(btcTxId)
+	txHexBytes, err := hex.DecodeString(txHex)
 	if err != nil {
 		fmt.Println("failed to decode BTC tx ID: ", err)
 		return "", err
@@ -137,9 +137,9 @@ func CallConfirmBtcWithdraw(podAddress string, oprAddr string, btcTxId string) (
 
 	hash := crypto.Keccak256Hash(
 		common.HexToAddress(podAddress).Bytes(),
-		common.HexToAddress(oprAddr).Bytes(),
-		btcTxIdBytes,
-		[]byte{1}, // true is represented as 1 in byte form
+		txHexBytes,
+		withdrawAddr,
+		// true is represented as 1 in byte form
 	)
 
 	hash = hashWithEthereumPrefix(hash)
@@ -151,7 +151,7 @@ func CallConfirmBtcWithdraw(podAddress string, oprAddr string, btcTxId string) (
 	}
 
 	// Call the confirmDeposit function
-	tx, err := instance.ConfirmWithdrawal(auth, common.HexToAddress(podAddress), btcTxIdBytes, signature)
+	tx, err := instance.ConfirmWithdrawal(auth, common.HexToAddress(podAddress), txHexBytes, signature)
 	if err != nil {
 		fmt.Println("failed to call withdraw confirm:", err)
 		return "", err

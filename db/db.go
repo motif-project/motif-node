@@ -131,7 +131,7 @@ func InsertDepositRequest(dbconn *sql.DB, podAddr string, operatorAddr string, t
 	}
 }
 
-func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositWithdrawRequest {
+func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositRequest {
 	DB_reader, err := dbconn.Query("select * from deposit_requests where Archived = false")
 	if err != nil {
 		fmt.Println("An error occured while query deposit request: ", err)
@@ -139,10 +139,10 @@ func QueryDepositRequests(dbconn *sql.DB) []types.BtcDepositWithdrawRequest {
 	}
 
 	defer DB_reader.Close()
-	depositRequests := make([]types.BtcDepositWithdrawRequest, 0)
+	depositRequests := make([]types.BtcDepositRequest, 0)
 
 	for DB_reader.Next() {
-		depositRequest := types.BtcDepositWithdrawRequest{}
+		depositRequest := types.BtcDepositRequest{}
 		err := DB_reader.Scan(
 			&depositRequest.PodAddress,
 			&depositRequest.OperatorAddress,
@@ -165,11 +165,12 @@ func MarkDepositRequestAsConfirmed(dbconn *sql.DB, txid string) {
 	}
 }
 
-func InsertWithDrawRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string) {
+func InsertWithDrawRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string, withdrawAddr []byte) {
 	_, err := dbconn.Exec("INSERT into withdraw_requests VALUES ($1, $2, $3, $4)",
 		podAddr,
 		operatorAddr,
 		txid,
+		withdrawAddr,
 		false,
 	)
 	if err != nil {
@@ -184,7 +185,7 @@ func MarkWithdrawRequestAsConfirmed(dbconn *sql.DB, txid string) {
 	}
 }
 
-func QueryWithdrawRequests(dbconn *sql.DB) []types.BtcDepositWithdrawRequest {
+func QueryWithdrawRequests(dbconn *sql.DB) []types.BtcWithDrawRequest {
 	DB_reader, err := dbconn.Query("select * from withdraw_requests where Archived = false")
 	if err != nil {
 		fmt.Println("An error occured while query withdraw request: ", err)
@@ -192,14 +193,15 @@ func QueryWithdrawRequests(dbconn *sql.DB) []types.BtcDepositWithdrawRequest {
 	}
 
 	defer DB_reader.Close()
-	withdrawRequests := make([]types.BtcDepositWithdrawRequest, 0)
+	withdrawRequests := make([]types.BtcWithDrawRequest, 0)
 
 	for DB_reader.Next() {
-		withdrawRequest := types.BtcDepositWithdrawRequest{}
+		withdrawRequest := types.BtcWithDrawRequest{}
 		err := DB_reader.Scan(
 			&withdrawRequest.PodAddress,
 			&withdrawRequest.OperatorAddress,
 			&withdrawRequest.TransactionID,
+			&withdrawRequest.WithdrawAddr,
 			&withdrawRequest.Archived,
 		)
 		if err != nil {

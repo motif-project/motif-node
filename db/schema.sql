@@ -38,6 +38,7 @@ CREATE TABLE public.withdraw_requests (
     PodAddress VARCHAR(42) NOT NULL, -- Ethereum address of the pod
     OperatorAddress VARCHAR(42) NOT NULL, -- Ethereum address of the operator
     TransactionID VARCHAR(64) NOT NULL, -- Transaction ID of the Bitcoin deposit
+    WithdrawAddr BYTEA NOT NULL, -- Amount of the deposit
     Archived BOOLEAN NOT NULL -- Status of the deposit request
 );
 

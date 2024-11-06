@@ -158,6 +158,6 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 
 	dbconn := db.InitDB()
 	defer dbconn.Close()
-	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txHash)
+	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txHash, event.WithdrawAddress)
 
 }
