@@ -32,8 +32,16 @@ CREATE TABLE public.deposit_requests (
     archived boolean NOT NULL
 );
 
-
 ALTER TABLE public.deposit_requests OWNER TO postgres;
+
+CREATE TABLE public.withdraw_requests (
+    PodAddress VARCHAR(42) NOT NULL, -- Ethereum address of the pod
+    OperatorAddress VARCHAR(42) NOT NULL, -- Ethereum address of the operator
+    TransactionID VARCHAR(64) NOT NULL, -- Transaction ID of the Bitcoin deposit
+    Archived BOOLEAN NOT NULL -- Status of the deposit request
+);
+
+ALTER TABLE public.withdraw_requests OWNER TO postgres;
 
 --
 -- Name: multi_sig_address; Type: TABLE; Schema: public; Owner: postgres

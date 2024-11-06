@@ -26,7 +26,7 @@ type BtcPubkeyArgs struct {
 	EthAddr   string
 }
 
-type BtcDepositRequest struct {
+type BtcDepositWithdrawRequest struct {
 	PodAddress      string // Ethereum address of the pod
 	OperatorAddress string // Ethereum address of the operator
 	TransactionID   string // Transaction ID of the Bitcoin deposit

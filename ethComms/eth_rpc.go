@@ -126,6 +126,41 @@ func CallConfirmBtcDeposit(podAddress string, oprAddr string, btcTxId string, am
 	return tx.Hash().Hex(), nil
 }
 
+func CallConfirmBtcWithdraw(podAddress string, oprAddr string, btcTxId string) (string, error) {
+	instance, privateKey, auth, err := initializeServiceManagerContract()
+
+	btcTxIdBytes, err := hex.DecodeString(btcTxId)
+	if err != nil {
+		fmt.Println("failed to decode BTC tx ID: ", err)
+		return "", err
+	}
+
+	hash := crypto.Keccak256Hash(
+		common.HexToAddress(podAddress).Bytes(),
+		common.HexToAddress(oprAddr).Bytes(),
+		btcTxIdBytes,
+		[]byte{1}, // true is represented as 1 in byte form
+	)
+
+	hash = hashWithEthereumPrefix(hash)
+
+	signature, err := signMessage(hash, privateKey)
+	if err != nil {
+		fmt.Println("failed to sign message: ", err)
+		return "", err
+	}
+
+	// Call the confirmDeposit function
+	tx, err := instance.ConfirmWithdrawal(auth, common.HexToAddress(podAddress), btcTxIdBytes, signature)
+	if err != nil {
+		fmt.Println("failed to call withdraw confirm:", err)
+		return "", err
+	}
+
+	fmt.Println("Transaction withdraw confirm submitted: ", tx.Hash().Hex())
+	return tx.Hash().Hex(), nil
+}
+
 func LoadEthAccount() accounts.Account {
 	keystoreDir := viper.GetString("eth_keystore_dir")
 	passphrase := viper.GetString("eth_keystore_passphrase")

@@ -70,3 +70,34 @@ func CheckDeposit() {
 	}
 
 }
+
+func CheckWithdraw() {
+	fmt.Println("starting check Withdraw process")
+	dbconn := db.InitDB()
+	defer dbconn.Close()
+	for {
+		withdrawRequests := db.QueryWithdrawRequests(dbconn)
+
+		for _, request := range withdrawRequests {
+			tx, err := utils.GetRawTransaction(request.TransactionID)
+			if err != nil {
+				continue
+			}
+			if tx.Confirmations <= 2 {
+				continue
+			}
+
+			_, err = ethComms.CallConfirmBtcWithdraw(request.PodAddress, request.OperatorAddress, request.TransactionID)
+			if err != nil {
+				fmt.Println("Failed to call confirm btc withdraw: ", err)
+				continue
+			}
+
+			db.MarkDepositRequestAsConfirmed(dbconn, request.TransactionID)
+
+		}
+		time.Sleep(3 * time.Minute)
+
+	}
+
+}
