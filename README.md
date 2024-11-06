@@ -1,4 +1,4 @@
-# BitDSM Operator Setup Guide 🧪 ⚙️
+# BitDSM Node Setup Guide 🧪 ⚙️
 
 ## 1. Overview
 The architecture includes the following components:
