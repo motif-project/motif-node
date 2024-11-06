@@ -97,17 +97,15 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 		totalAmountTxIn += u.Amount
 	}
 
-	totalAmountInBTC := utils.SatsToBtc(int64(totalAmountTxIn))
-
 	withdrawAddr, err := utils.HexToBech32(withdrawBTCAddress, &chaincfg.SigNetParams)
 	if err != nil {
 		fmt.Println("error in converting to bech32 : ", err)
 		return "", 0, err
 	}
 	fmt.Println("withdraw btc addr : ", withdrawAddr)
-	fmt.Println("total amount in BTC: ", totalAmountInBTC)
+	fmt.Println("total amount in BTC: ", totalAmountTxIn)
 
-	outputs = append(outputs, btcComms.TxOutput{withdrawAddr: totalAmountInBTC})
+	outputs = append(outputs, btcComms.TxOutput{withdrawAddr: totalAmountTxIn})
 
 	hexTx, err := btcComms.CreateRawTx(inputs, outputs, 0, wallet)
 	if err != nil {
@@ -127,7 +125,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 		return "", 0, err
 	}
 
-	totalAmountInBTC = utils.SatsToBtc(int64(totalAmountTxIn) - int64(fee))
+	totalAmountInBTC := totalAmountTxIn - utils.SatsToBtc(fee)
 	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
