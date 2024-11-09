@@ -145,7 +145,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 }
 
 func SignMultisigPSBT(psbt string) (string, error) {
-	walletName := viper.GetString("signer_wallet_name")
+	walletName := viper.GetString("multisig_signing_wallet_name")
 	_, psbt, err := btcComms.SignPsbt(psbt, walletName, false)
 	if err != nil {
 		fmt.Println("error in signing psbt : ", err)

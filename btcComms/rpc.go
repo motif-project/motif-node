@@ -71,6 +71,59 @@ func SendRPC(method string, data []interface{}, wallet string, signer bool) ([]b
 	return body, nil
 }
 
+func SendRPCOfflineWallet(method string, data []interface{}, wallet string, signer bool) ([]byte, error) {
+	host := viper.GetString("multisig_btc_node")
+	user := viper.GetString("multisig_btc_user")
+	pass := viper.GetString("multisig_btc_pass")
+	protocol := viper.GetString("multisig_btc_protocol")
+
+	request := JSONRPCRequest{
+		ID:      1,
+		Method:  method,
+		Params:  data,
+		Jsonrpc: "1.0",
+	}
+
+	requestJSON, err := json.Marshal(request)
+	if err != nil {
+		fmt.Println("Error creating JSON: ", err)
+		return nil, err
+	}
+
+	// Create a HTTP client
+	client := &http.Client{}
+
+	// Create a HTTP request
+	host = protocol + host + "/wallet/" + wallet
+	req, err := http.NewRequest("POST", host, bytes.NewBuffer(requestJSON))
+	if err != nil {
+		fmt.Println("Error creating request: ", err)
+		return nil, err
+	}
+
+	// Set the content type to application/json
+	req.Header.Set("Content-Type", "application/json")
+
+	// Set the basic authentication header
+	req.SetBasicAuth(user, pass)
+
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error sending request: ", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Read the response
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response: ", err)
+		return nil, err
+	}
+	return body, nil
+}
+
 func GetDescriptorInfo(dataStr string, wallet string) (DescriptorInfo, error) {
 
 	var response JSONRPCResponseDesc
@@ -201,7 +254,7 @@ func SignPsbt(psbtStr string, wallet string, signer bool) ([]string, string, err
 
 	fmt.Println("data: ", data)
 
-	result, _ := SendRPC("walletprocesspsbt", data, wallet, signer)
+	result, _ := SendRPCOfflineWallet("walletprocesspsbt", data, wallet, signer)
 	fmt.Println("result Sign PSBT: ", string(result))
 	var response RPCResponseCreatePsbt
 	err := json.Unmarshal(result, &response)

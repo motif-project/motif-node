@@ -1,24 +1,29 @@
-{   
+{
     "DB_port": "5432",
     "DB_host": "localhost",
     "DB_user": "forkscanner",
     "DB_password" : "forkscanner",
-    "DB_name" : "judge", 
-    
-    "btc_node_host" : "143.244.138.170:8332",
+    "DB_name" : "eigenavs",
+
+    "btc_node_host" : "147.182.155.20:18332",
     "btc_node_user" : "bitcoin",
     "btc_node_pass" : "Persario_1",
     "btc_node_protocol" : "http://",
     "fee_rate_adjustment" : "10",
-    "wallet_name": "online",
-    "btc_xpublic_key": "[f2ee8d39/84h/0h/0h]xpub6BhivFwKw8faYQaQcmwhjchA1uHQk7vaXJtehCqdhP2x4ETZ6AgCUAPfVeFahDWRQVQ7JKoxoV8G16ji7xei48PcZkVf8hcjNkwKByBLH5J/0/*",
-    "btc_public_key": "",
+    "wallet_name": "bitdsm2",
+    "btc_xpublic_key": "[aba9403b/84h/1h/0h]tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv/0/*",
+
+    "multisig_signing_wallet_name": "bitdsm",
+    "multisig_btc_host": "147.182.155.20:18332",
+    "multisig_btc_user": "bitcoin",
+    "multisig_btc_pass": "Persario_1",
+    "multisig_btc_protocol": "http://",
 
     "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
     "eth_ws_host" :"wss://ethereum-holesky-rpc.publicnode.com",
     "eth_keystore_dir": "keystore",
     "eth_keystore_password": "Persario_1",
-    
+
     "opr_metadata_uri" : "",
     "eigen_delegation_manager_address" : "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
     "bitdsm_registry_address": "0x9619e0b51531ba2607d55422d66b14c570d5de7a",
