@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/AhmadAshraf2/BitDSM-Node/btcComms"
-	"github.com/AhmadAshraf2/BitDSM-Node/db"
-	"github.com/AhmadAshraf2/BitDSM-Node/utils"
+	"github.com/BitDSM/BitDSM-Node/btcComms"
+	"github.com/BitDSM/BitDSM-Node/db"
+	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/spf13/viper"

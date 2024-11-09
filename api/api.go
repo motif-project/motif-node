@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/AhmadAshraf2/BitDSM-Node/address"
-	"github.com/AhmadAshraf2/BitDSM-Node/utils"
+	"github.com/BitDSM/BitDSM-Node/address"
+	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/gorilla/mux"
 )
 

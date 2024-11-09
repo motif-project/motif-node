@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/AhmadAshraf2/BitDSM-Node/btcComms"
+	"github.com/BitDSM/BitDSM-Node/btcComms"
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chaincfg"

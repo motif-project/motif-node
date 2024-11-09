@@ -5,9 +5,9 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/AhmadAshraf2/BitDSM-Node/db"
-	"github.com/AhmadAshraf2/BitDSM-Node/ethComms"
-	"github.com/AhmadAshraf2/BitDSM-Node/utils"
+	"github.com/BitDSM/BitDSM-Node/db"
+	"github.com/BitDSM/BitDSM-Node/ethComms"
+	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
 )

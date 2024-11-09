@@ -1,4 +1,4 @@
-module github.com/AhmadAshraf2/BitDSM-Node
+module github.com/BitDSM/BitDSM-Node
 
 go 1.22.1
 

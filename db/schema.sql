@@ -51,7 +51,7 @@ ALTER TABLE public.withdraw_requests OWNER TO postgres;
 CREATE TABLE public.multi_sig_address (
     address character varying(255) NOT NULL,
     script text NOT NULL,
-    podaddress character varying(255) NOT NULL,
+    podaddress character varying(255),
     signed boolean NOT NULL,
     archived boolean NOT NULL
 );

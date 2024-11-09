@@ -6,7 +6,7 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/AhmadAshraf2/BitDSM-Node/types"
+	"github.com/BitDSM/BitDSM-Node/types"
 	"github.com/spf13/viper"
 )
 
