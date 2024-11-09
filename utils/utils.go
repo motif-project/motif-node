@@ -132,6 +132,15 @@ func GetFeeFromBtcNode(tx *wire.MsgTx) (int64, error) {
 	fmt.Println("tx size in bytes : ", vsize)
 	fee := float64(vsize) * float64(feeRate) / float64(1024)
 	fmt.Println("fee for this tx : ", fee)
+	minFee, err := GetMinRelayTxFee()
+	if err != nil {
+		return int64(fee), nil
+	}
+	minFeeInSats := BtcToSats(minFee)
+	if fee < float64(minFeeInSats) {
+		fmt.Println("Fee is less than min relay fee. Setting fee to min relay fee")
+		fee = float64(minFeeInSats + 100)
+	}
 	return int64(fee), nil
 }
 
@@ -212,6 +221,18 @@ func ListUnspentBtcUtxos(address string) ([]btcjson.ListUnspentResult, error) {
 		return nil, err
 	}
 	return unspent, nil
+}
+
+func GetMinRelayTxFee() (float64, error) {
+	client := getBitcoinRpcClient()
+	defer client.Shutdown()
+
+	// Get mempool info
+	mempoolInfo, err := client.GetNetworkInfo()
+	if err != nil {
+		return 0, err
+	}
+	return mempoolInfo.RelayFee, nil
 }
 
 func Bech32ToHex(bech32Addr string) (string, error) {
