@@ -237,7 +237,6 @@ The API server is used to create new multisig addresses and PSBTs. It is a simpl
     "podEthAddr":""
 }
 ```
-```
 
 ### 6.3. Get Node Information
 - `Endpoint`: /eigen/node
