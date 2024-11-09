@@ -234,20 +234,9 @@ The API server is used to create new multisig addresses and PSBTs. It is a simpl
 ```json
 {
     "pubKey":"",
-    "ethAddr":""
+    "podEthAddr":""
 }
 ```
-
-### 6.2. Create and Signa PSBT
-- `Endpoint`: /eigen/signed_psbt
-- `Method`: POST
-- `Description`: It is a POST operation that creates a new PSBT with the provided inputs and outputs. It creates a PSBT, which spends all the funds in the multisig and sends it to the provided withdraw address.
-- `Body` :
-```json
-{
-    "withdrawAddr":"",
-    "ethAddr":""
-}
 ```
 
 ### 6.3. Get Node Information
