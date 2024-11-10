@@ -28,6 +28,8 @@ func SubscribeToDepositRequests() {
 	}
 
 	ethClient := ethclient.NewClient(client)
+	defer ethClient.Close()
+	defer client.Close()
 
 	podManagerAddr := common.HexToAddress(viper.GetString("pod_manager_address"))
 	podManager, err := PodManager.NewPodManager(podManagerAddr, ethClient)
@@ -43,7 +45,7 @@ func SubscribeToDepositRequests() {
 	sub, err := podManager.WatchVerifyBitcoinDepositRequest(
 		&bind.WatchOpts{Context: context.Background()},
 		ch,
-		nil,
+		[]common.Address{},
 		[]common.Address{oprEthAccount.Address},
 	)
 	if err != nil {
@@ -78,6 +80,8 @@ func SubscribeToWithdrawRequests() {
 	}
 
 	ethClient := ethclient.NewClient(client)
+	defer ethClient.Close()
+	defer client.Close()
 
 	podManagerAddr := common.HexToAddress(viper.GetString("pod_manager_address"))
 	podManager, err := PodManager.NewPodManager(podManagerAddr, ethClient)
@@ -93,7 +97,7 @@ func SubscribeToWithdrawRequests() {
 	sub, err := podManager.WatchBitcoinWithdrawalPSBTRequest(
 		&bind.WatchOpts{Context: context.Background()},
 		ch,
-		nil,
+		[]common.Address{},
 		[]common.Address{oprEthAccount.Address},
 	)
 	if err != nil {
