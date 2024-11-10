@@ -132,13 +132,6 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 
 	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawAddr: totalAmountInBTC}}
 
-	dustThreshold := float64(0.000003) // 300 satoshis, adjust as needed
-	changeAmount := totalAmountTxIn - totalAmountInBTC - utils.SatsToBtc(fee)
-	if changeAmount > dustThreshold {
-		fmt.Printf("Adding change output of %f BTC back to multisig address\n", changeAmount)
-		outputs = append(outputs, btcComms.TxOutput{multiSigAddress.Address: changeAmount})
-	}
-
 	p, err := btcComms.CreatePsbt(inputs, outputs, 0, wallet)
 	if err != nil {
 		fmt.Println("error in creating psbt : ", err)
