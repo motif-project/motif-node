@@ -163,6 +163,7 @@ func CallConfirmBtcWithdraw(podAddress string, oprAddr string, txHex string, wit
 
 func LoadEthAccount() accounts.Account {
 	keystoreDir := viper.GetString("eth_keystore_dir")
+	fmt.Println(keystoreDir)
 	passphrase := viper.GetString("eth_keystore_passphrase")
 	var ethAccount accounts.Account
 
