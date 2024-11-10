@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"sync"
 
@@ -21,9 +20,6 @@ func initialize() {
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
 	operator.RegisterOperator()
-
-	x, _ := hex.DecodeString("cddb2fc804f5c79f10e4b736f17405e0ea76e31d")
-	ethComms.CallConfirmBtcWithdraw("0x365119a2De4e389B542AAe945f26cb21cA3f3Fbf", "0x60b3b41240Fb9d353acE1E37B0CE79054154eA40", "cddb2fc804f5c79f10e4b736f17405e0ea76e31d", x)
 }
 
 func main() {
@@ -40,3 +36,5 @@ func main() {
 	ethComms.SubscribeToWithdrawRequests()
 	wg.Wait()
 }
+
+//  bd941ba584f9763567c6cd5567dc81a3a27903ac534d2dc3d17fe6ceaa335182
