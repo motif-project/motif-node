@@ -126,7 +126,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 		return "", 0, "", err
 	}
 
-	totalAmountInBTC := totalAmountTxIn - utils.SatsToBtc(fee)
+	totalAmountInBTC := utils.SatsToBtc(utils.BtcToSats(totalAmountTxIn) - fee)
 	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
