@@ -215,7 +215,7 @@ func ListUnspentBtcUtxos(address string) ([]btcjson.ListUnspentResult, error) {
 		log.Fatalf("Invalid Bitcoin address: %v", err)
 	}
 
-	unspent, err := client.ListUnspentMinMaxAddresses(3, 9999999, []btcutil.Address{addr})
+	unspent, err := client.ListUnspentMinMaxAddresses(1, 9999999, []btcutil.Address{addr})
 	if err != nil {
 		fmt.Println("Error listing unspent outputs: ", err)
 		return nil, err
