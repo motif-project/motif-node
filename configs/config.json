@@ -5,7 +5,7 @@
     "DB_password" : "forkscanner",
     "DB_name" : "eigenavs",
 
-    "btc_node_host" : "147.182.155.20:18332",
+    "btc_node_host" : "147.182.155.20:38333",
     "btc_node_user" : "bitcoin",
     "btc_node_pass" : "Persario_1",
     "btc_node_protocol" : "http://",
@@ -15,7 +15,7 @@
     "btc_public_key": "02ce985f738ae8cf92969ab31a06f74f5e977e335bf226b01231c2e10b55db08dd",
 
     "multisig_signing_wallet_name": "bitdsm",
-    "multisig_btc_host": "147.182.155.20:18332",
+    "multisig_btc_host": "147.182.155.20:38333",
     "multisig_btc_user": "bitcoin",
     "multisig_btc_pass": "Persario_1",
     "multisig_btc_protocol": "http://",
