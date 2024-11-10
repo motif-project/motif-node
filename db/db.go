@@ -83,6 +83,7 @@ func QueryMultisigAddresses(dbconn *sql.DB) []types.MultiSigAddress {
 	// fmt.Println("getting address for height: ", height)
 	var DB_reader *sql.Rows
 	var err error
+	var podAddress sql.NullString
 	DB_reader, err = dbconn.Query("select * from multi_sig_address where archived = false")
 
 	if err != nil {
@@ -97,13 +98,19 @@ func QueryMultisigAddresses(dbconn *sql.DB) []types.MultiSigAddress {
 		err := DB_reader.Scan(
 			&address.Address,
 			&address.Script,
-			&address.PodAddress,
+			&podAddress,
 			&address.Signed,
 			&address.Archived,
 		)
 		if err != nil {
 			fmt.Println(err)
 		}
+		if podAddress.Valid {
+			address.PodAddress = podAddress.String
+		} else {
+			address.PodAddress = ""
+		}
+
 		addresses = append(addresses, address)
 	}
 
