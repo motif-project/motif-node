@@ -20,8 +20,8 @@
     "multisig_btc_pass": "Persario_1",
     "multisig_btc_protocol": "http://",
 
-    "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
-    "eth_ws_host" :"wss://ethereum-holesky-rpc.publicnode.com",
+    "eth_rpc_host" : "https://holesky.drpc.org",
+    "eth_ws_host" :"wss://holesky.drpc.org",
     "eth_keystore_dir": "keystore",
     "eth_keystore_passphrase": "Persario_1",
 
