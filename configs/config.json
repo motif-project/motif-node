@@ -23,7 +23,7 @@
     "eth_rpc_host" : "https://ethereum-holesky-rpc.publicnode.com",
     "eth_ws_host" :"wss://ethereum-holesky-rpc.publicnode.com",
     "eth_keystore_dir": "keystore",
-    "eth_keystore_password": "Persario_1",
+    "eth_keystore_passphrase": "Persario_1",
 
     "opr_metadata_uri" : "",
     "eigen_delegation_manager_address" : "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
