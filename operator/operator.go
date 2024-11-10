@@ -26,7 +26,7 @@ func RegisterOperator() {
 	}
 
 	ethAccountOpr := ethComms.LoadEthAccount()
-	privateKey, err := ethComms.GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_password"))
+	privateKey, err := ethComms.GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_passphrase"))
 	if err != nil {
 		fmt.Println("Failed to get private key: ", err)
 	}

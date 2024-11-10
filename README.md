@@ -133,7 +133,7 @@ The config/config.json file contains various configuration settings required for
 - `eth_rpc_host`: The RPC host URL for connecting to the Ethereum node.
 - `eth_ws_host`: The WebSocket host URL for connecting to the Ethereum node.
 - `eth_keystore_dir`: The directory where the Ethereum keystore files are stored.
-- `eth_keystore_password`: The password for accessing the Ethereum keystore.
+- `eth_keystore_passphrase`: The password for accessing the Ethereum keystore.
 ### 3.3 AVS Configuration
 - `opr_metadata_uri`: The URI for the OPR metadata (currently empty).
 - `eigen_delegation_manager_address`: The Ethereum address of the Eigen Delegation Manager contract.

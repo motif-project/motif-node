@@ -198,7 +198,7 @@ func generateEthKeyPair() accounts.Account {
 		log.Fatalf("Failed to generate private key: %v", err)
 	}
 
-	password := viper.GetString("eth_keystore_password")
+	password := viper.GetString("eth_keystore_passphrase")
 	ks := keystore.NewKeyStore("keystore", keystore.StandardScryptN, keystore.StandardScryptP)
 	account, err := ks.ImportECDSA(privateKey, password)
 	if err != nil {
@@ -271,7 +271,7 @@ func initializeServiceManagerContract() (*BitDSMServiceManager.BitDSMServiceMana
 		return nil, nil, nil, err
 	}
 
-	privateKey, err := GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_password"))
+	privateKey, err := GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_passphrase"))
 	if err != nil {
 		fmt.Println("Failed to get private key: ", err)
 		return nil, nil, nil, err
