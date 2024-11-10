@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"time"
 
 	"github.com/BitDSM/BitDSM-Node/PodManager"
 	"github.com/BitDSM/BitDSM-Node/address"
@@ -57,6 +58,7 @@ func SubscribeToDepositRequests() {
 		select {
 		case err := <-sub.Err():
 			fmt.Println("Subscription error deposit:", err)
+			time.Sleep(1 * time.Minute)
 
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
@@ -106,6 +108,7 @@ func SubscribeToWithdrawRequests() {
 		select {
 		case err := <-sub.Err():
 			fmt.Println("Subscription error withdrawal:", err)
+			time.Sleep(1 * time.Minute)
 
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
