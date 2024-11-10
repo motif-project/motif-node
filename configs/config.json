@@ -20,8 +20,8 @@
     "multisig_btc_pass": "Persario_1",
     "multisig_btc_protocol": "http://",
 
-    "eth_rpc_host" : "https://holesky.drpc.org",
-    "eth_ws_host" :"wss://holesky.drpc.org",
+    "eth_rpc_host" : "https://holesky.infura.io/v3/e1dca20d79ba4d0d8f902572f1474105",
+    "eth_ws_host" :"wss://holesky.infura.io/ws/v3/e1dca20d79ba4d0d8f902572f1474105",
     "eth_keystore_dir": "keystore",
     "eth_keystore_passphrase": "Persario_1",
 
