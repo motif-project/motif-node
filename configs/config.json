@@ -12,6 +12,7 @@
     "fee_rate_adjustment" : "10",
     "wallet_name": "bitdsm2",
     "btc_xpublic_key": "[aba9403b/84h/1h/0h]tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv/0/*",
+    "btc_public_key": "02ce985f738ae8cf92969ab31a06f74f5e977e335bf226b01231c2e10b55db08dd",
 
     "multisig_signing_wallet_name": "bitdsm",
     "multisig_btc_host": "147.182.155.20:18332",

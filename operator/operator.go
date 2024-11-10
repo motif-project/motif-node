@@ -149,7 +149,8 @@ func RegisterOperator() {
 	}
 
 	// Register operator
-	btcPubkey, _ := hex.DecodeString("02ce985f738ae8cf92969ab31a06f74f5e977e335bf226b01231c2e10b55db08dd")
+	key := viper.GetString("btc_public_key")
+	btcPubkey, _ := hex.DecodeString(key)
 	tx, err := bitdsmRegistry.RegisterOperatorWithSignature(
 		auth,
 		operatorSignature,

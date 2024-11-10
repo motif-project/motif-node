@@ -47,8 +47,7 @@ func Server() {
 
 func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		PubKey     string `json:"pubKey"`
-		PodEthAddr string `json:"podEthAddr"`
+		PubKey string `json:"pubKey"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -60,11 +59,11 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Bitcoin public key", http.StatusBadRequest)
 		return
 	}
-	if !utils.IsValidEthAddress(request.PodEthAddr) {
-		http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
-		return
-	}
-	newAddress, err := address.GenerateSimpleMultisigAddress(request.PubKey, request.PodEthAddr)
+	// if !utils.IsValidEthAddress(request.PodEthAddr) {
+	// 	http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
+	// 	return
+	// }
+	newAddress, err := address.GenerateSimpleMultisigAddress(request.PubKey, "")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
