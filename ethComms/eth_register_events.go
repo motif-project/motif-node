@@ -144,7 +144,7 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 	fmt.Println(event.Operator)
 	fmt.Println(event.Pod)
 	fmt.Println(event.WithdrawAddress)
-	psbt, amount, txHash, err := address.GenerateMultisigwithdrawTx(hex.EncodeToString(event.WithdrawAddress), event.Pod.Hex())
+	psbt, amount, err := address.GenerateMultisigwithdrawTx(hex.EncodeToString(event.WithdrawAddress), event.Pod.Hex())
 	if err != nil {
 		fmt.Println("Error generating psbt : ", err)
 		return
