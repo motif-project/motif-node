@@ -200,7 +200,6 @@ func GetNewAddress(wallet string) (string, error) {
 func DecodePsbt(psbt string, wallet string) (PSBT, error) {
 	data := []interface{}{psbt}
 	result, _ := SendRPC("decodepsbt", data, wallet, false)
-	fmt.Println("result Decode Psbt: ", string(result))
 	var response JSONRPCResponsePsbt
 	err := json.Unmarshal(result, &response)
 	if err != nil {
@@ -249,7 +248,7 @@ func CreateRawTx(inputs []TxInput, outputs []TxOutput, locktime uint32, wallet s
 	return response.Result, nil
 }
 
-func SignPsbt(psbtStr string, wallet string, signer bool) ([]string, string, error) {
+func SignPsbt(psbtStr string, wallet string, signer bool) (string, string, error) {
 	data := []interface{}{psbtStr, true, "ALL|ANYONECANPAY"}
 
 	fmt.Println("data: ", data)
@@ -260,16 +259,16 @@ func SignPsbt(psbtStr string, wallet string, signer bool) ([]string, string, err
 	err := json.Unmarshal(result, &response)
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON: ", err)
-		return nil, "", err
+		return "", "", err
 	}
 	if response.Error != nil {
-		return []string{""}, "", errors.New("error in SignPsbt")
+		return "", "", errors.New("error in SignPsbt")
 	}
 	p := response.Result.Psbt
 	psbt, err := DecodePsbt(p, wallet)
 
 	if len(psbt.Inputs) <= 0 {
-		return nil, "", errors.New("no inputs in psbt")
+		return "", "", errors.New("no inputs in psbt")
 	}
 	var signatures []string
 
@@ -280,7 +279,7 @@ func SignPsbt(psbtStr string, wallet string, signer bool) ([]string, string, err
 		}
 	}
 
-	return signatures, p, nil
+	return psbt.Tx.Hash, p, nil
 }
 
 func UtxoUpdatePsbt(psbtStr string, desc string, wallet string) (string, error) {

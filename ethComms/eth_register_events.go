@@ -150,7 +150,7 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 		return
 	}
 
-	psbt, err = address.SignMultisigPSBT(psbt)
+	txid, psbt, err := address.SignMultisigPSBT(psbt)
 	if err != nil {
 		fmt.Println("Error signing psbt : ", err)
 		return
@@ -165,6 +165,6 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 
 	dbconn := db.InitDB()
 	defer dbconn.Close()
-	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txHash, event.WithdrawAddress)
+	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txid, event.WithdrawAddress)
 
 }

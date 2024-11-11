@@ -87,13 +87,7 @@ func CheckWithdraw() {
 				continue
 			}
 
-			txHex, err := utils.GetRawTransaction(request.TransactionID)
-			if err != nil {
-				fmt.Println("raw tx nod found")
-
-			}
-
-			_, err = ethComms.CallConfirmBtcWithdraw(request.PodAddress, request.OperatorAddress, txHex.Hex, request.WithdrawAddr)
+			_, err = ethComms.CallConfirmBtcWithdraw(request.PodAddress, request.OperatorAddress, tx.Hex, request.WithdrawAddr)
 			if err != nil {
 				fmt.Println("Failed to call confirm btc withdraw: ", err)
 				continue
