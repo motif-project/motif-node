@@ -93,7 +93,7 @@ func CheckWithdraw() {
 				continue
 			}
 
-			db.MarkDepositRequestAsConfirmed(dbconn, request.TransactionID)
+			db.MarkWithdrawRequestAsConfirmed(dbconn, request.TransactionID)
 
 		}
 		time.Sleep(3 * time.Minute)
