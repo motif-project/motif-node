@@ -173,7 +173,7 @@ func MarkDepositRequestAsConfirmed(dbconn *sql.DB, txid string) {
 }
 
 func InsertWithDrawRequest(dbconn *sql.DB, podAddr string, operatorAddr string, txid string, withdrawAddr []byte) {
-	_, err := dbconn.Exec("INSERT into withdraw_requests VALUES ($1, $2, $3, $4)",
+	_, err := dbconn.Exec("INSERT into withdraw_requests VALUES ($1, $2, $3, $4, $5)",
 		podAddr,
 		operatorAddr,
 		txid,
