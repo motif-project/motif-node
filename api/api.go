@@ -53,6 +53,11 @@ func Bech32toHexHandler(w http.ResponseWriter, r *http.Request) {
 		Address string `json:"address"`
 	}
 
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
 	addr, err := utils.Bech32ToHex(request.Address)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -77,6 +82,11 @@ func Bech32toHexHandler(w http.ResponseWriter, r *http.Request) {
 func HextoBech32Handler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		Address string `json:"address"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
 	}
 
 	addr, err := utils.HexToBech32(request.Address, &chaincfg.SigNetParams)
