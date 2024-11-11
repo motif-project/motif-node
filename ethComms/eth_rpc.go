@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/ecdsa"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -221,7 +222,11 @@ func CallWithdrawBitcoinPSBT(podAddress string, withdrawAddress string, psbt str
 	// 	return "", fmt.Errorf("failed to decode PSBT")
 	// }
 
-	psbtBytes := []byte(psbt)
+	psbtBytes, err := base64.StdEncoding.DecodeString(psbt)
+	if err != nil {
+		fmt.Println("Error decoding base64 string:", err)
+		return "", err
+	}
 
 	withdrawAddressBytes, err := hex.DecodeString(withdrawAddress)
 	if err != nil {
