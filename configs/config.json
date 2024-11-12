@@ -27,8 +27,8 @@
 
     "opr_metadata_uri" : "",
     "eigen_delegation_manager_address" : "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
-    "bitdsm_registry_address": "0x37e04ac839c85e472310ff592b83e3f15e9920ec",
-    "service_manager_address": "0xfadca4a8774deaf364fa92d62054430ff76b3e97",
+    "bitdsm_registry_address": "0xba3c98e3d60871f92d1c8890a13207fe46534641",
+    "service_manager_address": "0x7238717bcf57fa8dcfece86f827e05a1ad4bf6b1",
     "eigen_avs_directory_address": "0x055733000064333CaDDbC92763c58BF0192fFeBf",
-    "pod_manager_address": "0x49741f924ef91b14184ebe38b952f3ddf09008be"
+    "pod_manager_address": "0x96eae70bc21925dde05602c87c4483579205b1f6"
 }
