@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -282,4 +283,20 @@ func HexToBech32(hexAddr string, network *chaincfg.Params) (string, error) {
 	}
 
 	return addr.String(), nil
+}
+
+func Base64ToHex(base64String string) (string, error) {
+	data, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(data), nil
+}
+
+func HexToBase64(hexString string) (string, error) {
+	data, err := hex.DecodeString(hexString)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(data), nil
 }
