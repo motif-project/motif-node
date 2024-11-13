@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/big"
 	"sync"
 
 	_ "github.com/lib/pq"
@@ -20,6 +21,8 @@ func initialize() {
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
 	operator.RegisterOperator()
+	amount := big.NewInt(10000)
+	ethComms.CallConfirmBtcDeposit("0xc8a8046210b10CfFD34b7E314F477Be770d105Bf", "0xf0773fcafaab63791235d44a3629b44db686862406ac155c944f8a27a77e3da9", "0x60b3b41240Fb9d353acE1E37B0CE79054154eA40", amount)
 }
 
 func main() {
