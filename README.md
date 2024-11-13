@@ -6,7 +6,7 @@ The architecture includes the following components:
 - **Deposit Checker**: A thread which confirms the BTC deposit form a BTC node . 
 - **Api Server**: An API server to create new multisig addresses and PSBTs. 
 - **bitcoind Offline Wallet**: An offline server that hosts a single wallet containing a signer BTC key. This server is used to sign PSBT transactions forwarded by the `API server`.
-- **Signet Node**: A `BTC` full `Signet` node used to watch addresses, create transactions and broadcast them. 
+- **Signet Node**: A `BTC` full `Signet` node with txindexing enabled, used to watch addresses, create transactions and broadcast them. 
 
 
 **For a production environment, it is highly recommended to deploy the bitcoind Offline Wallet and the nyks Full Node/btc-oracle on separate hosts**.
