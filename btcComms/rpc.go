@@ -279,6 +279,7 @@ func SignPsbt(psbtStr string, wallet string, signer bool) (string, string, error
 		}
 	}
 
+	fmt.Println("psbt.Tx.Hash: ", psbt.Tx.Hash)
 	return psbt.Tx.Hash, p, nil
 }
 

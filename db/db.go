@@ -186,7 +186,7 @@ func InsertWithDrawRequest(dbconn *sql.DB, podAddr string, operatorAddr string, 
 }
 
 func MarkWithdrawRequestAsConfirmed(dbconn *sql.DB, txid string) {
-	_, err := dbconn.Exec("UPDATE withdraw_requests SET archived = true WHERE transaction_id = $1", txid)
+	_, err := dbconn.Exec("UPDATE withdraw_requests SET archived = true WHERE transactionid = $1", txid)
 	if err != nil {
 		fmt.Println("An error occured while updating deposit request query: ", err)
 	}
