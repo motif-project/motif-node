@@ -128,6 +128,11 @@ The config/config.json file contains various configuration settings required for
 - `btc_node_host`: The host URL for connecting to the Bitcoin node.
 - `btc_node_user`: The username for accessing the Bitcoin node.
 - `btc_xpublic_key`: The extended public key for the Bitcoin wallet, used for generating addresses.
+- `multisig_signing_wallet_name`: Offline wallet name,
+- `multisig_btc_node`: Offline btc node,
+- `multisig_btc_user`: "Offline Btc user",
+- `multisig_btc_pass`: "Offline Btc Pass",
+- `multisig_btc_protocol`: "Offline Btc protocol,
 
 ### 3.2 Ethereum Configuration
 - `eth_rpc_host`: The RPC host URL for connecting to the Ethereum node.
@@ -234,7 +239,16 @@ The API server is used to create new multisig addresses and PSBTs. It is a simpl
 ```json
 {
     "pubKey":"",
-    "podEthAddr":""
+}
+```
+### 6.2 Api endpoints to HexToBech32 conversion and vice versa
+- `Endpoint`: /eigen/bech32_to_hex ans /eigen/hex_to_bech32
+- `Method`: POST
+- `Description`: It is an endpoint used to convert bech32 to a hex string and vice versa
+- `Body` :
+```json
+{
+    "address":"",
 }
 ```
 
