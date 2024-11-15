@@ -65,6 +65,7 @@ func CheckDeposit() {
 			}
 
 		}
+		fmt.Println("sleeping for 3 minutes check deposit")
 		time.Sleep(3 * time.Minute)
 
 	}
@@ -96,6 +97,7 @@ func CheckWithdraw() {
 			db.MarkWithdrawRequestAsConfirmed(dbconn, request.TransactionID)
 
 		}
+		fmt.Println("sleeping for 3 minutes check withdrawal")
 		time.Sleep(3 * time.Minute)
 
 	}
