@@ -59,9 +59,10 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 
 func buildSimpleMultisigDescriptor(depositorPubKey string) (string, error) {
 	required := 2
-	judgePubKey := viper.GetString("btc_xpublic_key")
+	oprXPubKey := viper.GetString("btc_xpublic_key")
+	oprPubKey := utils.CleanXpubKey(oprXPubKey)
 
-	descriptorScript := fmt.Sprintf("wsh(multi(%d,%s,%s))", required, judgePubKey, depositorPubKey)
+	descriptorScript := fmt.Sprintf("wsh(multi(%d,%s,%s))", required, oprPubKey, depositorPubKey)
 	fmt.Println(descriptorScript)
 	return descriptorScript, nil
 }

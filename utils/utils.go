@@ -317,15 +317,18 @@ func HexToBase64(hexString string) (string, error) {
 	return base64.StdEncoding.EncodeToString(data), nil
 }
 
-func cleanTpubKey(input string) string {
+func CleanXpubKey(input string) string {
 	// Find the position of "tpub"
-	tpubIndex := strings.Index(input, "tpub")
-	if tpubIndex == -1 {
-		return input // Return original if "tpub" not found
+	pubIndex := strings.Index(input, "tpub")
+	if pubIndex == -1 {
+		pubIndex := strings.Index(input, "xpub")
+		if pubIndex == -1 {
+			return input // Return original if neither "tpub" nor "xpub" is found
+		}
 	}
 
 	// Extract from "tpub" to the end
-	cleaned := input[tpubIndex:]
+	cleaned := input[pubIndex:]
 
 	// Remove any trailing derivation path (e.g., /0/0)
 	if slashIndex := strings.Index(cleaned, "/"); slashIndex != -1 {
@@ -335,9 +338,9 @@ func cleanTpubKey(input string) string {
 	return cleaned
 }
 
-func DerivePublicKey(tpub string, index uint32) (string, error) {
-	tpub = cleanTpubKey(tpub)
-	masterKey, err := hdkeychain.NewKeyFromString(tpub)
+func DerivePublicKey(xpub string, index uint32) (string, error) {
+	xpub = CleanXpubKey(xpub)
+	masterKey, err := hdkeychain.NewKeyFromString(xpub)
 	if err != nil {
 		fmt.Println("failed to parse tpub: ", err)
 		return "", err

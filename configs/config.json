@@ -11,7 +11,7 @@
     "btc_node_protocol" : "http://",
     "fee_rate_adjustment" : "10",
     "wallet_name": "bitdsm2",
-    "btc_xpublic_key": "[aba9403b/84h/1h/0h]tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv/0/0",
+    "btc_xpublic_key": "[aba9403b/84h/1h/0h]tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv/0/*",
 
     "multisig_signing_wallet_name": "bitdsm",
     "multisig_btc_node": "147.182.155.20:38332",
