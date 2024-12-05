@@ -89,13 +89,13 @@ func RegisterOperator() {
 			fmt.Println("Transaction failed: ", receipt)
 			panic("Operator registration failed")
 		}
-		fmt.Println("Operator registered to EigenLayer")
 	} else {
 		fmt.Println("Operator already registered to EigenLayer")
 	}
 
 	// registering with AVS
 	bitdsmStakeRegistryAddr := common.HexToAddress(viper.GetString("bitdsm_registry_address"))
+	fmt.Println("bitdsmStakeRegistryAddr: ", bitdsmStakeRegistryAddr)
 	bitdsmRegistry, err := BitdsmRegistry.NewBitdsmRegistry(bitdsmStakeRegistryAddr, client)
 	if err != nil {
 		fmt.Println("failed to initialize AVS registry contract: ", err)
@@ -134,6 +134,7 @@ func RegisterOperator() {
 	}
 
 	serviceManagerAddr := common.HexToAddress(viper.GetString("service_manager_address"))
+	fmt.Println("serviceManagerAddr: ", serviceManagerAddr)
 	digestHash, err := avsDirectory.CalculateOperatorAVSRegistrationDigestHash(
 		&bind.CallOpts{},
 		auth.From, // operator address

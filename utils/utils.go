@@ -337,7 +337,6 @@ func cleanTpubKey(input string) string {
 
 func DerivePublicKey(tpub string, index uint32) (string, error) {
 	tpub = cleanTpubKey(tpub)
-	fmt.Println("Deriving public key for index: ", tpub)
 	masterKey, err := hdkeychain.NewKeyFromString(tpub)
 	if err != nil {
 		fmt.Println("failed to parse tpub: ", err)
@@ -360,7 +359,6 @@ func DerivePublicKey(tpub string, index uint32) (string, error) {
 	}
 	pubKeyBytes := pubKey.SerializeCompressed()
 	pubKeyHex := fmt.Sprintf("%x", pubKeyBytes)
-
 	fmt.Println("Derived public key: ", pubKeyHex)
 
 	return pubKeyHex, nil
