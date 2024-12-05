@@ -89,6 +89,9 @@ func RegisterOperator() {
 			fmt.Println("Transaction failed: ", receipt)
 			panic("Operator registration failed")
 		}
+		fmt.Println("Operator registered to EigenLayer")
+	} else {
+		fmt.Println("Operator already registered to EigenLayer")
 	}
 
 	// registering with AVS
