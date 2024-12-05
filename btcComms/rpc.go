@@ -167,9 +167,9 @@ func ImportDescriptor(desc string, wallet string) error {
 }
 
 func DeriveAddress(wallet string, descriptor string) (string, error) {
-	data := []interface{}{descriptor, []int{0, 0}}
+	data := []interface{}{descriptor}
 	result, _ := SendRPC("deriveaddresses", data, wallet, false)
-	fmt.Println("result New Address: ", string(result))
+	fmt.Println("result Derive Address: ", string(result))
 	var response JSONRPCArrayResponse
 	err := json.Unmarshal(result, &response)
 	if err != nil {
