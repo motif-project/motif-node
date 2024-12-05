@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/BitDSM/BitDSM-Node/btcComms"
 	"github.com/btcsuite/btcd/btcec"
@@ -316,25 +317,51 @@ func HexToBase64(hexString string) (string, error) {
 	return base64.StdEncoding.EncodeToString(data), nil
 }
 
+func cleanTpubKey(input string) string {
+	// Find the position of "tpub"
+	tpubIndex := strings.Index(input, "tpub")
+	if tpubIndex == -1 {
+		return input // Return original if "tpub" not found
+	}
+
+	// Extract from "tpub" to the end
+	cleaned := input[tpubIndex:]
+
+	// Remove any trailing derivation path (e.g., /0/0)
+	if slashIndex := strings.Index(cleaned, "/"); slashIndex != -1 {
+		cleaned = cleaned[:slashIndex]
+	}
+
+	return cleaned
+}
+
 func DerivePublicKey(tpub string, index uint32) (string, error) {
+	tpub = cleanTpubKey(tpub)
+	fmt.Println("Deriving public key for index: ", tpub)
 	masterKey, err := hdkeychain.NewKeyFromString(tpub)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse tpub: %v", err)
+		fmt.Println("failed to parse tpub: ", err)
+		return "", err
 	}
 	child0, err := masterKey.Derive(0)
 	if err != nil {
-		return "", fmt.Errorf("failed to derive first child: %v", err)
+		fmt.Println("failed to derive first child: ", err)
+		return "", err
 	}
 	childIndex, err := child0.Derive(index)
 	if err != nil {
-		return "", fmt.Errorf("failed to derive second child: %v", err)
+		fmt.Println("failed to derive second child: ", err)
+		return "", err
 	}
 	pubKey, err := childIndex.ECPubKey()
 	if err != nil {
-		return "", fmt.Errorf("failed to get public key: %v", err)
+		fmt.Println("failed to get public key: ", err)
+		return "", err
 	}
 	pubKeyBytes := pubKey.SerializeCompressed()
 	pubKeyHex := fmt.Sprintf("%x", pubKeyBytes)
+
+	fmt.Println("Derived public key: ", pubKeyHex)
 
 	return pubKeyHex, nil
 }
