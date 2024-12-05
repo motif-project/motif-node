@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/BitDSM/BitDSM-Node/address"
+	"github.com/BitDSM/BitDSM-Node/ethComms"
 	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/gorilla/mux"
 )
@@ -127,7 +128,7 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Invalid Eth Address", http.StatusBadRequest)
 	// 	return
 	// }
-	newAddress, err := address.GenerateSimpleMultisigAddress(request.PubKey, "")
+	newAddress, script, err := address.GenerateSimpleMultisigAddress(request.PubKey, "")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
@@ -137,6 +138,8 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, err.Error(), http.StatusBadRequest)
 	// 	return
 	// }
+
+	ethComms.CallVerifyBtcAddress(newAddress, script)
 
 	response := map[string]string{
 		"newAddress": newAddress,
