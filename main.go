@@ -16,10 +16,6 @@ import (
 
 func initialize() {
 	utils.InitConfigFile()
-
-	// tpub := viper.GetString("btc_xpublic_key")
-	utils.DerivePublicKey("tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv", 0)
-
 	utils.LoadBtcWallet(viper.GetString("wallet_name"))
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
