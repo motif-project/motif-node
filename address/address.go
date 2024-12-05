@@ -53,6 +53,8 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 		return "", "", err
 	}
 
+	fmt.Println("Multisig address script : ", addressInfo.Hex)
+
 	dbconn.Close()
 	return address, addressInfo.Hex, nil
 }
