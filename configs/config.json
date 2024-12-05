@@ -11,8 +11,7 @@
     "btc_node_protocol" : "http://",
     "fee_rate_adjustment" : "10",
     "wallet_name": "bitdsm2",
-    "btc_xpublic_key": "[aba9403b/84h/1h/0h]tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv/0/*",
-    "btc_public_key": "02ce985f738ae8cf92969ab31a06f74f5e977e335bf226b01231c2e10b55db08dd",
+    "btc_xpublic_key": "[aba9403b/84h/1h/0h]tpubDDWrtj9UoLPmCkWC6PMAWQzKi1acucimmw2XB33QjabqYtEUNWgFGxxcKK7dQVeZkNfEaKYSaqVFLcsVJEKyMdVATZucXB1ooBX81PSYQPv/0/0",
 
     "multisig_signing_wallet_name": "bitdsm",
     "multisig_btc_node": "147.182.155.20:38332",
@@ -27,8 +26,8 @@
 
     "opr_metadata_uri" : "",
     "eigen_delegation_manager_address" : "0xA44151489861Fe9e3055d95adC98FbD462B948e7",
-    "bitdsm_registry_address": "0xba3c98e3d60871f92d1c8890a13207fe46534641",
-    "service_manager_address": "0x7238717bcf57fa8dcfece86f827e05a1ad4bf6b1",
+    "bitdsm_registry_address": "0x2b50637B799e38Fc55596829DB1126A57681E012",
+    "service_manager_address": "0x3a2F63a724b42DeA06B548C81C3C219FE2529624",
     "eigen_avs_directory_address": "0x055733000064333CaDDbC92763c58BF0192fFeBf",
-    "pod_manager_address": "0x96eae70bc21925dde05602c87c4483579205b1f6"
+    "pod_manager_address": "0x3a8DF58c0B3D5A1d8f4D8046D8531A9433ee5255"
 }

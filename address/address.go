@@ -45,7 +45,6 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 		fmt.Println("Error getting address info : ", err)
 		return "", err
 	}
-	// Decode Hex string to bytes
 
 	err = db.InsertMultiSigAddress(dbconn, address, addressInfo.Hex, podEthAddress)
 	dbconn.Close()

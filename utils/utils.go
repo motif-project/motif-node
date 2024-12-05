@@ -13,9 +13,11 @@ import (
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcutil/base58"
+	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/btcsuite/btcutil/psbt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
@@ -236,29 +238,42 @@ func GetMinRelayTxFee() (float64, error) {
 	return mempoolInfo.RelayFee, nil
 }
 
-func Bech32ToHex(bech32Addr string) (string, error) {
-	// Decode the bech32 address
-	addr, err := btcutil.DecodeAddress(bech32Addr, &chaincfg.MainNetParams)
-	if err != nil {
-		return "", fmt.Errorf("failed to decode bech32 address: %v", err)
-	}
+// func Bech32AddressToBytes(address string) ([]byte, error) {
+// 	addr, err := btcutil.DecodeAddress(address, &chaincfg.MainNetParams)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("invalid Bech32 address: %v", err)
+// 	}
+// 	witnessAddr, ok := addr.(*btcutil.AddressWitnessPubKeyHash)
+// 	if !ok {
+// 		return nil, fmt.Errorf("address is not a Bech32 witness address")
+// 	}
+// 	witnessProgram := witnessAddr.WitnessProgram()
+// 	return witnessProgram, nil
+// }
 
-	// Handle different witness address types
-	var witnessProgram []byte
-	switch a := addr.(type) {
-	case *btcutil.AddressWitnessPubKeyHash:
-		witnessProgram = a.WitnessProgram()
-	case *btcutil.AddressWitnessScriptHash:
-		witnessProgram = a.WitnessProgram()
-	default:
-		return "", fmt.Errorf("unsupported address type: %T", addr)
-	}
+// func Bech32ToHex(bech32Addr string) (string, error) {
+// 	// Decode the bech32 address
+// 	addr, err := btcutil.DecodeAddress(bech32Addr, &chaincfg.MainNetParams)
+// 	if err != nil {
+// 		return "", fmt.Errorf("failed to decode bech32 address: %v", err)
+// 	}
 
-	// Convert to hex
-	hexAddr := hex.EncodeToString(witnessProgram)
+// 	// Handle different witness address types
+// 	var witnessProgram []byte
+// 	switch a := addr.(type) {
+// 	case *btcutil.AddressWitnessPubKeyHash:
+// 		witnessProgram = a.WitnessProgram()
+// 	case *btcutil.AddressWitnessScriptHash:
+// 		witnessProgram = a.WitnessProgram()
+// 	default:
+// 		return "", fmt.Errorf("unsupported address type: %T", addr)
+// 	}
 
-	return hexAddr, nil
-}
+// 	// Convert to hex
+// 	hexAddr := hex.EncodeToString(witnessProgram)
+
+// 	return hexAddr, nil
+// }
 
 func HexToBech32(hexAddr string, network *chaincfg.Params) (string, error) {
 	// Decode hex string to bytes
@@ -299,4 +314,43 @@ func HexToBase64(hexString string) (string, error) {
 		return "", err
 	}
 	return base64.StdEncoding.EncodeToString(data), nil
+}
+
+func DerivePublicKey(tpub string, index uint32) (string, error) {
+	masterKey, err := hdkeychain.NewKeyFromString(tpub)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse tpub: %v", err)
+	}
+	child0, err := masterKey.Derive(0)
+	if err != nil {
+		return "", fmt.Errorf("failed to derive first child: %v", err)
+	}
+	childIndex, err := child0.Derive(index)
+	if err != nil {
+		return "", fmt.Errorf("failed to derive second child: %v", err)
+	}
+	pubKey, err := childIndex.ECPubKey()
+	if err != nil {
+		return "", fmt.Errorf("failed to get public key: %v", err)
+	}
+	pubKeyBytes := pubKey.SerializeCompressed()
+	pubKeyHex := fmt.Sprintf("%x", pubKeyBytes)
+
+	return pubKeyHex, nil
+}
+
+func hexToScript(hexStr string) (string, error) {
+	// Decode hex string to bytes
+	scriptBytes, err := hex.DecodeString(hexStr)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode hex: %v", err)
+	}
+
+	// Disassemble the script using btcsuite
+	disbuf, err := txscript.DisasmString(scriptBytes)
+	if err != nil {
+		return "", fmt.Errorf("failed to disassemble script: %v", err)
+	}
+
+	return disbuf, nil
 }
