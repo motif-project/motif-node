@@ -62,6 +62,8 @@ func SendRPC(method string, data []interface{}, wallet string, signer bool) ([]b
 	}
 	defer resp.Body.Close()
 
+	fmt.Println("result SendRPC: ", string(resp.Body))
+
 	// Read the response
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -363,6 +365,8 @@ func GetAddressInfo(address string, wallet string) (AddressInfo, error) {
 		return AddressInfo{}, err
 	}
 
+	fmt.Println("result Get Address Info: ", string(result))
+
 	err = json.Unmarshal(result, &response)
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON: ", err)
@@ -371,6 +375,9 @@ func GetAddressInfo(address string, wallet string) (AddressInfo, error) {
 	if response.Error != nil {
 		return AddressInfo{}, errors.New("error in getting address info")
 	}
+
+	fmt.Println("result Get Address Info after unmarshal: ", string(result))
+
 	return response.Result, nil
 }
 

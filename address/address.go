@@ -46,6 +46,8 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 		return "", "", err
 	}
 
+	fmt.Println("Address : ", addressInfo)
+
 	err = db.InsertMultiSigAddress(dbconn, address, addressInfo.Hex, podEthAddress)
 	dbconn.Close()
 	if err != nil {
