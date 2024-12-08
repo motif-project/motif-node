@@ -62,8 +62,6 @@ func SendRPC(method string, data []interface{}, wallet string, signer bool) ([]b
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("result SendRPC: ", string(resp.Body))
-
 	// Read the response
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
