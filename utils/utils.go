@@ -362,7 +362,6 @@ func DerivePublicKey(xpub string, index uint32) (string, error) {
 	}
 	pubKeyBytes := pubKey.SerializeCompressed()
 	pubKeyHex := fmt.Sprintf("%x", pubKeyBytes)
-	fmt.Println("Derived public key: ", pubKeyHex)
 
 	return pubKeyHex, nil
 }

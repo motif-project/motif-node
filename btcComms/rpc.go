@@ -152,7 +152,6 @@ func ImportDescriptor(desc string, wallet string) error {
 	descData := []ImportDescriptorType{
 		{
 			Desc:      desc,
-			Active:    true,
 			Internal:  false,
 			Timestamp: "now",
 		},
@@ -163,6 +162,7 @@ func ImportDescriptor(desc string, wallet string) error {
 	if err != nil {
 		fmt.Println("error importing descriptor	: ", err)
 	}
+
 	return nil
 }
 
