@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/BitDSM/BitDSM-Node/address"
-	"github.com/BitDSM/BitDSM-Node/ethComms"
 	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/gorilla/mux"
 )
@@ -139,11 +138,9 @@ func GetAddressHandler(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	ethComms.CallVerifyBtcAddress(newAddress, script)
-
 	response := map[string]string{
-		"newAddress": newAddress,
-		// "addressHex": addressHex,
+		"newAddress":    newAddress,
+		"addressScript": script,
 	}
 
 	responseJSON, err := json.Marshal(response)
