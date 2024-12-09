@@ -7,7 +7,6 @@ import (
 	"github.com/BitDSM/BitDSM-Node/btcComms"
 	"github.com/BitDSM/BitDSM-Node/db"
 	"github.com/BitDSM/BitDSM-Node/utils"
-	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/spf13/viper"
 )
@@ -77,7 +76,7 @@ func buildSimpleMultisigDescriptor(depositorPubKey string) (string, error) {
 	return descriptorScript, nil
 }
 
-func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (string, int64, error) {
+func GenerateMultisigwithdrawTx(withdrawBTCAddr string, podEthAddr string) (string, int64, error) {
 	dbconn := db.InitDB()
 	defer dbconn.Close()
 	wallet := viper.GetString("wallet_name")
@@ -108,15 +107,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 		totalAmountTxIn += u.Amount
 	}
 
-	withdrawAddr, err := utils.HexToBech32(withdrawBTCAddress, &chaincfg.SigNetParams)
-	if err != nil {
-		fmt.Println("error in converting to bech32 : ", err)
-		return "", 0, err
-	}
-	fmt.Println("withdraw btc addr : ", withdrawAddr)
-	fmt.Println("total amount in BTC: ", totalAmountTxIn)
-
-	outputs = append(outputs, btcComms.TxOutput{withdrawAddr: totalAmountTxIn})
+	outputs = append(outputs, btcComms.TxOutput{withdrawBTCAddr: totalAmountTxIn})
 
 	hexTx, err := btcComms.CreateRawTx(inputs, outputs, 0, wallet)
 	if err != nil {
@@ -140,7 +131,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
-	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawAddr: totalAmountInBTC}}
+	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawBTCAddr: totalAmountInBTC}}
 
 	p, err := btcComms.CreatePsbt(inputs, outputs, 0, wallet)
 	if err != nil {
