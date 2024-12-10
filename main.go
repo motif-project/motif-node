@@ -36,5 +36,3 @@ func main() {
 	ethComms.SubscribeToWithdrawRequests()
 	wg.Wait()
 }
-
-//abigen --bin=BitdsmRegistry/BitdsmRegistry.bin  --abi=BitdsmRegistry/BitdsmRegistry.abi  --pkg=BitdsmRegistry --out=BitdsmRegistry/BitdsmRegistry.go
