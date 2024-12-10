@@ -343,3 +343,23 @@ func concatenateBytes(byteSlices ...[]byte) []byte {
 
 	return buffer.Bytes()
 }
+
+func CallVerifyBtcAddress(address string, script string) (string, error) {
+	instance, _, auth, err := initializeServiceManagerContract()
+
+	scriptBytes, err := hex.DecodeString(script)
+	if err != nil {
+		fmt.Println("failed to decode BTC tx ID: ", err)
+		return "", err
+	}
+
+	// Call the confirmDeposit function
+	tx, err := instance.VerifyBTCAddress(auth, address, scriptBytes)
+	if err != nil {
+		fmt.Println("failed to verify Address:", err)
+		return "", err
+	}
+
+	fmt.Println("Verify Btc Deposit Address sent : ", tx.Hash().Hex())
+	return tx.Hash().Hex(), nil
+}

@@ -144,7 +144,7 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 	fmt.Println(event.Operator)
 	fmt.Println(event.Pod)
 	fmt.Println(event.WithdrawAddress)
-	psbt, amount, err := address.GenerateMultisigwithdrawTx(hex.EncodeToString(event.WithdrawAddress), event.Pod.Hex())
+	psbt, amount, err := address.GenerateMultisigwithdrawTx(event.WithdrawAddress, event.Pod.Hex())
 	if err != nil {
 		fmt.Println("Error generating psbt : ", err)
 		return
@@ -156,7 +156,7 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 		return
 	}
 
-	withdrawAddress := hex.EncodeToString(event.WithdrawAddress)
+	withdrawAddress := event.WithdrawAddress
 	_, err = CallWithdrawBitcoinPSBT(event.Pod.Hex(), withdrawAddress, psbt, *big.NewInt(amount))
 	if err != nil {
 		fmt.Println("Error in calling withdraw bitcoin psbt : ", err)
@@ -165,6 +165,11 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 
 	dbconn := db.InitDB()
 	defer dbconn.Close()
-	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txid, event.WithdrawAddress)
+	addrBytes, _ := hex.DecodeString(event.WithdrawAddress)
+	if err != nil {
+		fmt.Println("Error converting withdraw address to bytes : ", err)
+		return
+	}
+	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txid, addrBytes)
 
 }

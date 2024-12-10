@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"math/big"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/BitDSM/BitDSM-Node/BitdsmRegistry"
 	"github.com/BitDSM/BitDSM-Node/DelegationManager"
 	"github.com/BitDSM/BitDSM-Node/ethComms"
+	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -23,23 +23,27 @@ func RegisterOperator() {
 	client, err := ethComms.GetEthClient()
 	if err != nil {
 		fmt.Println("Failed to get eth client: ", err)
+		return
 	}
 
 	ethAccountOpr := ethComms.LoadEthAccount()
 	privateKey, err := ethComms.GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_passphrase"))
 	if err != nil {
 		fmt.Println("Failed to get private key: ", err)
+		return
 	}
 
 	chainID, err := client.ChainID(context.Background())
 	if err != nil {
 		fmt.Println("Failed to get chain ID: ", err)
+		return
 	}
 
 	// Create an authenticated transactor
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
 	if err != nil {
-		log.Fatalf("Failed to create authorized transactor: ", err)
+		fmt.Println("Failed to create authorized transactor: ", err)
+		return
 	}
 
 	operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
@@ -53,12 +57,14 @@ func RegisterOperator() {
 	delegationManager, err := DelegationManager.NewDelegationManager(delegationManagerAddr, client)
 	if err != nil {
 		fmt.Println("failed to initialize delegation manager: ", err)
+		return
 	}
 	// Check if operator is already registered in EigenLayer
 	fmt.Println("auth.From: ", auth.From)
 	registeredOperator, err := delegationManager.IsOperator(&bind.CallOpts{}, auth.From)
 	if err != nil {
 		fmt.Println("Failed to check operator registration: ", err)
+		return
 	}
 
 	if !registeredOperator {
@@ -83,19 +89,24 @@ func RegisterOperator() {
 			fmt.Println("Transaction failed: ", receipt)
 			panic("Operator registration failed")
 		}
+	} else {
+		fmt.Println("Operator already registered to EigenLayer")
 	}
 
 	// registering with AVS
 	bitdsmStakeRegistryAddr := common.HexToAddress(viper.GetString("bitdsm_registry_address"))
+	fmt.Println("bitdsmStakeRegistryAddr: ", bitdsmStakeRegistryAddr)
 	bitdsmRegistry, err := BitdsmRegistry.NewBitdsmRegistry(bitdsmStakeRegistryAddr, client)
 	if err != nil {
 		fmt.Println("failed to initialize AVS registry contract: ", err)
+		return
 	}
 
 	// Check if operator is already registered in AVS
 	registered, err := bitdsmRegistry.OperatorRegistered(&bind.CallOpts{}, auth.From)
 	if err != nil {
 		fmt.Println("failed to check operator registration in AVS: ", err)
+		return
 	}
 
 	if registered {
@@ -119,9 +130,11 @@ func RegisterOperator() {
 	avsDirectory, err := AvsDirectory.NewAvsDirectory(avsDirectoryAddress, client)
 	if err != nil {
 		fmt.Println("failed to initialize AVS directory contract: ", err)
+		return
 	}
 
 	serviceManagerAddr := common.HexToAddress(viper.GetString("service_manager_address"))
+	fmt.Println("serviceManagerAddr: ", serviceManagerAddr)
 	digestHash, err := avsDirectory.CalculateOperatorAVSRegistrationDigestHash(
 		&bind.CallOpts{},
 		auth.From, // operator address
@@ -131,10 +144,12 @@ func RegisterOperator() {
 	)
 	if err != nil {
 		fmt.Println("failed to calculate digest hash: ", err)
+		return
 	}
 	signature, err := crypto.Sign(digestHash[:], privateKey)
 	if err != nil {
 		fmt.Println("failed to sign digest hash: ", err)
+		return
 	}
 
 	fmt.Println("signature: ", signature)
@@ -149,16 +164,26 @@ func RegisterOperator() {
 	}
 
 	// Register operator
-	key := viper.GetString("btc_public_key")
-	btcPubkey, _ := hex.DecodeString(key)
+	key := viper.GetString("btc_xpublic_key")
+	pubkey, err := utils.DerivePublicKey(key, 0)
+	if err != nil {
+		fmt.Println("failed to derive public key: ", err)
+		return
+	}
+	pubkeyBytes, err := hex.DecodeString(pubkey)
+	if err != nil {
+		fmt.Println("failed to derive public key: ", err)
+		return
+	}
 	tx, err := bitdsmRegistry.RegisterOperatorWithSignature(
 		auth,
 		operatorSignature,
 		auth.From,
-		btcPubkey,
+		pubkeyBytes,
 	)
 	if err != nil {
 		fmt.Println("failed to register operator: ", err)
+		return
 	}
 
 	receipt, err := bind.WaitMined(context.Background(), client, tx)

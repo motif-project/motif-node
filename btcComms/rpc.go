@@ -152,7 +152,6 @@ func ImportDescriptor(desc string, wallet string) error {
 	descData := []ImportDescriptorType{
 		{
 			Desc:      desc,
-			Active:    true,
 			Internal:  false,
 			Timestamp: "now",
 		},
@@ -163,13 +162,14 @@ func ImportDescriptor(desc string, wallet string) error {
 	if err != nil {
 		fmt.Println("error importing descriptor	: ", err)
 	}
+
 	return nil
 }
 
 func DeriveAddress(wallet string, descriptor string) (string, error) {
-	data := []interface{}{descriptor, []int{0, 0}}
+	data := []interface{}{descriptor}
 	result, _ := SendRPC("deriveaddresses", data, wallet, false)
-	fmt.Println("result New Address: ", string(result))
+	fmt.Println("result Derive Address: ", string(result))
 	var response JSONRPCArrayResponse
 	err := json.Unmarshal(result, &response)
 	if err != nil {
@@ -363,6 +363,8 @@ func GetAddressInfo(address string, wallet string) (AddressInfo, error) {
 		return AddressInfo{}, err
 	}
 
+	fmt.Println("result Get Address Info: ", string(result))
+
 	err = json.Unmarshal(result, &response)
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON: ", err)
@@ -371,6 +373,9 @@ func GetAddressInfo(address string, wallet string) (AddressInfo, error) {
 	if response.Error != nil {
 		return AddressInfo{}, errors.New("error in getting address info")
 	}
+
+	fmt.Println("result Get Address Info after unmarshal: ", string(result))
+
 	return response.Result, nil
 }
 

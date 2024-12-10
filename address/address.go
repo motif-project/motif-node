@@ -7,12 +7,11 @@ import (
 	"github.com/BitDSM/BitDSM-Node/btcComms"
 	"github.com/BitDSM/BitDSM-Node/db"
 	"github.com/BitDSM/BitDSM-Node/utils"
-	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/spf13/viper"
 )
 
-func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string) (string, error) {
+func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string) (string, string, error) {
 	dbconn := db.InitDB()
 	wallet := viper.GetString("wallet_name")
 
@@ -24,7 +23,7 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 	resp, err := btcComms.GetDescriptorInfo(descriptor, wallet)
 	if err != nil {
 		fmt.Println("error in getting descriptorinfo : ", err)
-		return "", err
+		return "", "", err
 	}
 
 	fmt.Println("Descriptor : ", resp.Descriptor)
@@ -32,7 +31,7 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 	err = btcComms.ImportDescriptor(resp.Descriptor, wallet)
 	if err != nil {
 		fmt.Println("error in importing descriptor : ", err)
-		return "", err
+		return "", "", err
 	}
 
 	address, err := btcComms.DeriveAddress(wallet, resp.Descriptor)
@@ -43,31 +42,41 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 	addressInfo, err := btcComms.GetAddressInfo(address, wallet)
 	if err != nil {
 		fmt.Println("Error getting address info : ", err)
-		return "", err
+		return "", "", err
 	}
-	// Decode Hex string to bytes
+
+	fmt.Println("Address : ", addressInfo)
 
 	err = db.InsertMultiSigAddress(dbconn, address, addressInfo.Hex, podEthAddress)
 	dbconn.Close()
 	if err != nil {
 		fmt.Println("error in inserting multisig address : ", err)
-		return "", err
+		return "", "", err
 	}
 
+	fmt.Println("Multisig address script : ", addressInfo.Hex)
+
 	dbconn.Close()
-	return address, nil
+	return address, addressInfo.Hex, nil
 }
 
 func buildSimpleMultisigDescriptor(depositorPubKey string) (string, error) {
 	required := 2
-	judgePubKey := viper.GetString("btc_xpublic_key")
+	oprXPubKey := viper.GetString("btc_xpublic_key")
+	oprXPubKey = utils.CleanXpubKey(oprXPubKey)
+	oprPubKey, err := utils.DerivePublicKey(oprXPubKey, 0)
+	if err != nil {
+		fmt.Println("error in deriving public key : ", err)
+		return "", err
+	}
+	fmt.Println("Operator public key : ", oprPubKey)
 
-	descriptorScript := fmt.Sprintf("wsh(multi(%d,%s,%s))", required, judgePubKey, depositorPubKey)
+	descriptorScript := fmt.Sprintf("wsh(multi(%d,%s,%s))", required, oprPubKey, depositorPubKey)
 	fmt.Println(descriptorScript)
 	return descriptorScript, nil
 }
 
-func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (string, int64, error) {
+func GenerateMultisigwithdrawTx(withdrawBTCAddr string, podEthAddr string) (string, int64, error) {
 	dbconn := db.InitDB()
 	defer dbconn.Close()
 	wallet := viper.GetString("wallet_name")
@@ -98,15 +107,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 		totalAmountTxIn += u.Amount
 	}
 
-	withdrawAddr, err := utils.HexToBech32(withdrawBTCAddress, &chaincfg.SigNetParams)
-	if err != nil {
-		fmt.Println("error in converting to bech32 : ", err)
-		return "", 0, err
-	}
-	fmt.Println("withdraw btc addr : ", withdrawAddr)
-	fmt.Println("total amount in BTC: ", totalAmountTxIn)
-
-	outputs = append(outputs, btcComms.TxOutput{withdrawAddr: totalAmountTxIn})
+	outputs = append(outputs, btcComms.TxOutput{withdrawBTCAddr: totalAmountTxIn})
 
 	hexTx, err := btcComms.CreateRawTx(inputs, outputs, 0, wallet)
 	if err != nil {
@@ -130,7 +131,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddress string, podEthAddr string) (s
 	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
-	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawAddr: totalAmountInBTC}}
+	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawBTCAddr: totalAmountInBTC}}
 
 	p, err := btcComms.CreatePsbt(inputs, outputs, 0, wallet)
 	if err != nil {

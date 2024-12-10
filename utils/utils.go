@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/BitDSM/BitDSM-Node/btcComms"
 	"github.com/btcsuite/btcd/btcec"
@@ -13,9 +14,11 @@ import (
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcutil/base58"
+	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/btcsuite/btcutil/psbt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
@@ -236,30 +239,6 @@ func GetMinRelayTxFee() (float64, error) {
 	return mempoolInfo.RelayFee, nil
 }
 
-func Bech32ToHex(bech32Addr string) (string, error) {
-	// Decode the bech32 address
-	addr, err := btcutil.DecodeAddress(bech32Addr, &chaincfg.MainNetParams)
-	if err != nil {
-		return "", fmt.Errorf("failed to decode bech32 address: %v", err)
-	}
-
-	// Handle different witness address types
-	var witnessProgram []byte
-	switch a := addr.(type) {
-	case *btcutil.AddressWitnessPubKeyHash:
-		witnessProgram = a.WitnessProgram()
-	case *btcutil.AddressWitnessScriptHash:
-		witnessProgram = a.WitnessProgram()
-	default:
-		return "", fmt.Errorf("unsupported address type: %T", addr)
-	}
-
-	// Convert to hex
-	hexAddr := hex.EncodeToString(witnessProgram)
-
-	return hexAddr, nil
-}
-
 func HexToBech32(hexAddr string, network *chaincfg.Params) (string, error) {
 	// Decode hex string to bytes
 	decoded, err := hex.DecodeString(hexAddr)
@@ -299,4 +278,69 @@ func HexToBase64(hexString string) (string, error) {
 		return "", err
 	}
 	return base64.StdEncoding.EncodeToString(data), nil
+}
+
+func CleanXpubKey(input string) string {
+	// Find the position of "tpub"
+	pubIndex := strings.Index(input, "tpub")
+	if pubIndex == -1 {
+		pubIndex := strings.Index(input, "xpub")
+		if pubIndex == -1 {
+			return input // Return original if neither "tpub" nor "xpub" is found
+		}
+	}
+
+	// Extract from "tpub" to the end
+	cleaned := input[pubIndex:]
+
+	// Remove any trailing derivation path (e.g., /0/0)
+	if slashIndex := strings.Index(cleaned, "/"); slashIndex != -1 {
+		cleaned = cleaned[:slashIndex]
+	}
+
+	return cleaned
+}
+
+func DerivePublicKey(xpub string, index uint32) (string, error) {
+	xpub = CleanXpubKey(xpub)
+	masterKey, err := hdkeychain.NewKeyFromString(xpub)
+	if err != nil {
+		fmt.Println("failed to parse tpub: ", err)
+		return "", err
+	}
+	child0, err := masterKey.Derive(0)
+	if err != nil {
+		fmt.Println("failed to derive first child: ", err)
+		return "", err
+	}
+	childIndex, err := child0.Derive(index)
+	if err != nil {
+		fmt.Println("failed to derive second child: ", err)
+		return "", err
+	}
+	pubKey, err := childIndex.ECPubKey()
+	if err != nil {
+		fmt.Println("failed to get public key: ", err)
+		return "", err
+	}
+	pubKeyBytes := pubKey.SerializeCompressed()
+	pubKeyHex := fmt.Sprintf("%x", pubKeyBytes)
+
+	return pubKeyHex, nil
+}
+
+func hexToScript(hexStr string) (string, error) {
+	// Decode hex string to bytes
+	scriptBytes, err := hex.DecodeString(hexStr)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode hex: %v", err)
+	}
+
+	// Disassemble the script using btcsuite
+	disbuf, err := txscript.DisasmString(scriptBytes)
+	if err != nil {
+		return "", fmt.Errorf("failed to disassemble script: %v", err)
+	}
+
+	return disbuf, nil
 }
