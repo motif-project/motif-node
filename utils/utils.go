@@ -344,14 +344,3 @@ func hexToScript(hexStr string) (string, error) {
 
 	return disbuf, nil
 }
-
-func GetChainParams() (*chaincfg.Params, error) {
-	env := viper.GetString("env")
-	if env == "dev" {
-		return &chaincfg.SigNetParams, nil
-	}
-	if env == "prod" {
-		return &chaincfg.MainNetParams, nil
-	}
-	return nil, fmt.Errorf("Invalid environment")
-}

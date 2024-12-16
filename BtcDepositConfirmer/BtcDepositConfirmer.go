@@ -8,12 +8,14 @@ import (
 	"github.com/BitDSM/BitDSM-Node/db"
 	"github.com/BitDSM/BitDSM-Node/ethComms"
 	"github.com/BitDSM/BitDSM-Node/utils"
+	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
+	"github.com/spf13/viper"
 )
 
 func CheckDeposit() {
 	fmt.Println("starting check deposit process")
-	chainParams, err := utils.GetChainParams()
+	chainParams, err := getChainParams()
 	if err != nil {
 		return
 	}
@@ -105,4 +107,15 @@ func CheckWithdraw() {
 
 	}
 
+}
+
+func getChainParams() (*chaincfg.Params, error) {
+	env := viper.GetString("env")
+	if env == "dev" {
+		return &chaincfg.SigNetParams, nil
+	}
+	if env == "prod" {
+		return &chaincfg.MainNetParams, nil
+	}
+	return nil, fmt.Errorf("Invalid environment")
 }

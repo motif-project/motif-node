@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/BitDSM/BitDSM-Node/utils"
+	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
@@ -310,7 +310,7 @@ func UtxoUpdatePsbt(psbtStr string, desc string, wallet string) (string, error) 
 
 func CreatePsbtV1(utxo TxInput, outputs []TxOutput, unlockHeight uint32, scriptPubKey []byte, amount int64) (*psbt.Packet, error) {
 	// Create a new PSBT
-	chainParams, err := utils.GetChainParams()
+	chainParams, err := getChainParams()
 	if err != nil {
 		return nil, err
 	}
@@ -441,4 +441,15 @@ func SignRawTransaction(tx string, wallet string) (string, error) {
 		return "", errors.New("error in signing raw transaction")
 	}
 	return response.Result.Hex, nil
+}
+
+func getChainParams() (*chaincfg.Params, error) {
+	env := viper.GetString("env")
+	if env == "dev" {
+		return &chaincfg.SigNetParams, nil
+	}
+	if env == "prod" {
+		return &chaincfg.MainNetParams, nil
+	}
+	return nil, fmt.Errorf("Invalid environment")
 }
