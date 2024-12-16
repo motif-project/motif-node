@@ -1,4 +1,5 @@
 {
+    "env": "dev",
     "DB_port": "5432",
     "DB_host": "localhost",
     "DB_user": "forkscanner",

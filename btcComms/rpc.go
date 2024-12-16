@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
@@ -310,6 +310,10 @@ func UtxoUpdatePsbt(psbtStr string, desc string, wallet string) (string, error) 
 
 func CreatePsbtV1(utxo TxInput, outputs []TxOutput, unlockHeight uint32, scriptPubKey []byte, amount int64) (*psbt.Packet, error) {
 	// Create a new PSBT
+	chainParams, err := utils.GetChainParams()
+	if err != nil {
+		return nil, err
+	}
 	hash, err := chainhash.NewHashFromStr(utxo.Txid)
 	if err != nil {
 		log.Fatalf("Invalid hash: %v", err)
@@ -323,16 +327,10 @@ func CreatePsbtV1(utxo TxInput, outputs []TxOutput, unlockHeight uint32, scriptP
 		fmt.Println("output : ", output)
 		for addr, amount := range output {
 			fmt.Println("amount : ", amount)
-			address, err := btcutil.DecodeAddress(addr, &chaincfg.SigNetParams)
+			address, err := btcutil.DecodeAddress(addr, chainParams)
 			if err != nil {
 				return nil, err
 			}
-
-			// script, err := txscript.PayToAddrScript(address)
-			// if err != nil {
-			// 	fmt.Println(err)
-			// 	return nil, err
-			// }
 
 			TxOut = append(TxOut, wire.NewTxOut(int64(amount), address.ScriptAddress()))
 		}

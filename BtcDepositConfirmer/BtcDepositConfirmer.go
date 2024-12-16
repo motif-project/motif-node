@@ -8,12 +8,15 @@ import (
 	"github.com/BitDSM/BitDSM-Node/db"
 	"github.com/BitDSM/BitDSM-Node/ethComms"
 	"github.com/BitDSM/BitDSM-Node/utils"
-	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
 )
 
 func CheckDeposit() {
 	fmt.Println("starting check deposit process")
+	chainParams, err := utils.GetChainParams()
+	if err != nil {
+		return
+	}
 	dbconn := db.InitDB()
 	defer dbconn.Close()
 	for {
@@ -38,7 +41,7 @@ func CheckDeposit() {
 
 			for _, multiSigAddress := range multisigaddresses {
 				for _, txOut := range transaction.TxOut {
-					_, addresses, _, err := txscript.ExtractPkScriptAddrs(txOut.PkScript, &chaincfg.SigNetParams)
+					_, addresses, _, err := txscript.ExtractPkScriptAddrs(txOut.PkScript, chainParams)
 					if err != nil {
 						fmt.Println("Failed to extract addresses: ", err)
 						continue
