@@ -17,7 +17,7 @@ import (
 func initialize() {
 	utils.InitConfigFile()
 	env := viper.GetString("env")
-	if env != "dev" || env != "prod" {
+	if env != "dev" && env != "prod" {
 		fmt.Println("Invalid environment")
 		panic("Invalid environment")
 	}
