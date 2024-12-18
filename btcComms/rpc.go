@@ -134,6 +134,8 @@ func GetDescriptorInfo(dataStr string, wallet string) (DescriptorInfo, error) {
 		return response.Result, err
 	}
 
+	fmt.Println("result : ", result)
+
 	err = json.Unmarshal(result, &response)
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON: ", err)
