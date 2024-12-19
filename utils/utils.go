@@ -284,7 +284,7 @@ func CleanXpubKey(input string) string {
 	// Find the position of "tpub"
 	pubIndex := strings.Index(input, "tpub")
 	if pubIndex == -1 {
-		pubIndex := strings.Index(input, "xpub")
+		pubIndex = strings.Index(input, "xpub")
 		if pubIndex == -1 {
 			return input // Return original if neither "tpub" nor "xpub" is found
 		}
