@@ -21,6 +21,7 @@ func initialize() {
 		fmt.Println("Invalid environment")
 		panic("Invalid environment")
 	}
+
 	utils.LoadBtcWallet(viper.GetString("wallet_name"))
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
