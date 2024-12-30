@@ -131,7 +131,7 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddr string, podEthAddr string) (stri
 	fmt.Println("fee in sats : ", fee)
 	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
 
-	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawBTCAddr: totalAmountInBTC}}
+	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawBTCAddr: totalAmountTxIn}}
 
 	fmt.Println("inputs : ", inputs)
 	fmt.Println("outputs : ", outputs)
