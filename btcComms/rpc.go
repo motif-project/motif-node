@@ -213,9 +213,9 @@ func DecodePsbt(psbt string, wallet string) (PSBT, error) {
 }
 
 func CreatePsbt(inputs []TxInput, outputs []TxOutput, locktime uint32, wallet string) (string, error) {
-	feeRate := make(map[string]float64)
-	feeRate["feeRate"] = 0
-	data := []interface{}{inputs, outputs, locktime, feeRate}
+	params := make(map[string][]int)
+	params["subtractFeeFromOutputs"] = []int{0}
+	data := []interface{}{inputs, outputs, locktime, params}
 	result, _ := SendRPC("walletcreatefundedpsbt", data, wallet, false)
 	fmt.Println("result Create Psbt: ", string(result))
 	var response RPCResponseCreatePsbt
