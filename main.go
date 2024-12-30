@@ -27,7 +27,8 @@ func initialize() {
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
 	operator.RegisterOperator()
-	psbt, _, _ := address.GenerateMultisigwithdrawTx("tb1qw7yedz2cevhl422947hns03yrngxhu43mhf5g0", "0x32DDC1F8cb6A602B956a31c846486531AbfB98b6")
+	// psbt, _, _ := address.GenerateMultisigwithdrawTx("tb1qw7yedz2cevhl422947hns03yrngxhu43mhf5g0", "0x32DDC1F8cb6A602B956a31c846486531AbfB98b6")
+	psbt := "cHNidP8BAFICAAAAAZ7fMPyc9aKRN3aQl76FpjBcDl8TeCK9vdhLkC84wFKLAAAAAAD1////AdQGAAAAAAAAFgAUd4mWiVjLL/qpRa+vOD4kHNBr8rEAAAAAAAEAiQIAAAABHGJMV/6F6OF2vdr8VOvaNYdUjDxKtwj6U6tZc7OEJXoAAAAAAP3///8CuAsAAAAAAAAiACBnkXmevzIAqlQfQe3OHGXAFYYvs9ohwr/dMJspbgRhwGMCAAAAAAAAIlEgcG9TI/pZVVREj7lb4v9h/r0j7zHaTy6aEQswqZhB9QjvfAMAAQEruAsAAAAAAAAiACBnkXmevzIAqlQfQe3OHGXAFYYvs9ohwr/dMJspbgRhwAEFR1IhA8sjVC9pjtHmF6YjQptYXZj7keRIOZSdtBJrKg1acyCwIQI6vMM/6vT76nEQCqlIqcX+Xm4htu3+V2WjHeb8K8JCGFKuIgYCOrzDP+r0++pxEAqpSKnF/l5uIbbt/ldlox3m/CvCQhgEd4mWiSIGA8sjVC9pjtHmF6YjQptYXZj7keRIOZSdtBJrKg1acyCwBMEaNmoAAA=="
 	_, psbt, _ = address.SignMultisigPSBT(psbt)
 	fmt.Println(psbt)
 }
