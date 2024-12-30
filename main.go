@@ -27,7 +27,7 @@ func initialize() {
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
 	operator.RegisterOperator()
-	address.GenerateMultisigwithdrawTx("tb1qw7yedz2cevhl422947hns03yrngxhu43mhf5g0", "32DDC1F8cb6A602B956a31c846486531AbfB98b6")
+	address.GenerateMultisigwithdrawTx("tb1qw7yedz2cevhl422947hns03yrngxhu43mhf5g0", "0x32DDC1F8cb6A602B956a31c846486531AbfB98b6")
 }
 
 func main() {
