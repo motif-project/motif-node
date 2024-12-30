@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/BitDSM/BitDSM-Node/BtcDepositConfirmer"
+	"github.com/BitDSM/BitDSM-Node/address"
 	"github.com/BitDSM/BitDSM-Node/api"
 	"github.com/BitDSM/BitDSM-Node/ethComms"
 	"github.com/BitDSM/BitDSM-Node/operator"
@@ -26,6 +27,7 @@ func initialize() {
 	ethAccount := ethComms.LoadEthAccount()
 	fmt.Println("Eth account: ", ethAccount.Address.Hex())
 	operator.RegisterOperator()
+	address.GenerateMultisigwithdrawTx("tb1qw7yedz2cevhl422947hns03yrngxhu43mhf5g0", "32DDC1F8cb6A602B956a31c846486531AbfB98b6")
 }
 
 func main() {
