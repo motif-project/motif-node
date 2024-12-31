@@ -107,30 +107,6 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddr string, podEthAddr string) (stri
 		totalAmountTxIn += u.Amount
 	}
 
-	outputs = append(outputs, btcComms.TxOutput{withdrawBTCAddr: totalAmountTxIn})
-
-	hexTx, err := btcComms.CreateRawTx(inputs, outputs, 0, wallet)
-	if err != nil {
-		fmt.Println("error in creating raw tx : ", err)
-		return "", 0, err
-	}
-
-	multisigTx, err := utils.CreateTxFromHex(hexTx)
-	if err != nil {
-		fmt.Println("error decoding tx : ", err)
-		return "", 0, err
-	}
-
-	fee, err := utils.GetFeeFromBtcNode(multisigTx)
-	if err != nil {
-		fmt.Println("error in getting fee : ", err)
-		return "", 0, err
-	}
-
-	totalAmountInBTC := utils.SatsToBtc(utils.BtcToSats(totalAmountTxIn) - fee)
-	fmt.Println("fee in sats : ", fee)
-	fmt.Println("total amount in btc after fee : ", totalAmountInBTC)
-
 	outputs = []btcComms.TxOutput{btcComms.TxOutput{withdrawBTCAddr: totalAmountTxIn}}
 
 	fmt.Println("inputs : ", inputs)
@@ -141,10 +117,18 @@ func GenerateMultisigwithdrawTx(withdrawBTCAddr string, podEthAddr string) (stri
 		return "", 0, err
 	}
 
+	psbt, err := btcComms.DecodePsbt(p, wallet)
+	if err != nil {
+		fmt.Println("error in decoding psbt : ", err)
+
+		return "", 0, err
+	}
+
 	fmt.Println("transaction base64 psbt: ", p)
+	fmt.Println("transaction hex psbt: ")
 
 	db.MarkMultisigProcessed(dbconn, multiSigAddress.Address)
-	return p, utils.BtcToSats(totalAmountInBTC), nil
+	return p, utils.BtcToSats(psbt.Tx.Vout[0].Value), nil
 }
 
 func SignMultisigPSBT(psbt string) (string, string, error) {
