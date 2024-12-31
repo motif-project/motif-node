@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 
 	"github.com/BitDSM/BitDSM-Node/btcComms"
@@ -149,7 +150,12 @@ func GetFeeFromBtcNode(tx *wire.MsgTx) (int64, error) {
 }
 
 func BtcToSats(btc float64) int64 {
-	return int64(btc * 1e8)
+	x := btc * 1e8
+	_, frac := math.Modf(x)
+	if frac != 0 {
+		return int64(x) + 1
+	}
+	return int64(x)
 }
 
 func SatsToBtc(sats int64) float64 {

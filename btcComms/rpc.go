@@ -267,18 +267,6 @@ func SignPsbt(psbtStr string, wallet string, signer bool) (string, string, error
 	p := response.Result.Psbt
 	psbt, err := DecodePsbt(p, wallet)
 
-	if len(psbt.Inputs) <= 0 {
-		return "", "", errors.New("no inputs in psbt")
-	}
-	var signatures []string
-
-	for _, input := range psbt.Inputs {
-		for _, v := range input.PartialSigs {
-			signatures = append(signatures, v)
-			break
-		}
-	}
-
 	fmt.Println("psbt.Tx.Hash: ", psbt.Tx.Hash)
 	return psbt.Tx.Hash, p, nil
 }
