@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/BitDSM/BitDSM-Node/btcComms"
-	"github.com/BitDSM/BitDSM-Node/db"
-	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/motif-project/motif-node/btcComms"
+	"github.com/motif-project/motif-node/db"
+	"github.com/motif-project/motif-node/utils"
 	"github.com/spf13/viper"
 )
 

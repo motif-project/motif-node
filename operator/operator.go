@@ -8,14 +8,14 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/BitDSM/BitDSM-Node/AvsDirectory"
-	"github.com/BitDSM/BitDSM-Node/BitdsmRegistry"
-	"github.com/BitDSM/BitDSM-Node/DelegationManager"
-	"github.com/BitDSM/BitDSM-Node/ethComms"
-	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/motif-project/motif-node/AvsDirectory"
+	"github.com/motif-project/motif-node/DelegationManager"
+	"github.com/motif-project/motif-node/MotifRegistry"
+	"github.com/motif-project/motif-node/ethComms"
+	"github.com/motif-project/motif-node/utils"
 	"github.com/spf13/viper"
 )
 
@@ -94,16 +94,16 @@ func RegisterOperator() {
 	}
 
 	// registering with AVS
-	bitdsmStakeRegistryAddr := common.HexToAddress(viper.GetString("bitdsm_registry_address"))
-	fmt.Println("bitdsmStakeRegistryAddr: ", bitdsmStakeRegistryAddr)
-	bitdsmRegistry, err := BitdsmRegistry.NewBitdsmRegistry(bitdsmStakeRegistryAddr, client)
+	MotifStakeRegistryAddr := common.HexToAddress(viper.GetString("motif_registry_address"))
+	fmt.Println("motifStakeRegistryAddr: ", MotifStakeRegistryAddr)
+	motifRegistry, err := MotifRegistry.NewMotifRegistry(MotifStakeRegistryAddr, client)
 	if err != nil {
 		fmt.Println("failed to initialize AVS registry contract: ", err)
 		return
 	}
 
 	// Check if operator is already registered in AVS
-	registered, err := bitdsmRegistry.OperatorRegistered(&bind.CallOpts{}, auth.From)
+	registered, err := motifRegistry.OperatorRegistered(&bind.CallOpts{}, auth.From)
 	if err != nil {
 		fmt.Println("failed to check operator registration in AVS: ", err)
 		return
@@ -157,7 +157,7 @@ func RegisterOperator() {
 		signature[64] += 27
 	}
 
-	operatorSignature := BitdsmRegistry.ISignatureUtilsSignatureWithSaltAndExpiry{
+	operatorSignature := MotifRegistry.ISignatureUtilsSignatureWithSaltAndExpiry{
 		Signature: signature, // Your signature bytes
 		Salt:      saltArray,
 		Expiry:    expiry,
@@ -176,7 +176,7 @@ func RegisterOperator() {
 		fmt.Println("failed to derive public key: ", err)
 		return
 	}
-	tx, err := bitdsmRegistry.RegisterOperatorWithSignature(
+	tx, err := motifRegistry.RegisterOperatorWithSignature(
 		auth,
 		operatorSignature,
 		auth.From,

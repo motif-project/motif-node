@@ -8,13 +8,13 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/BitDSM/BitDSM-Node/PodManager"
-	"github.com/BitDSM/BitDSM-Node/address"
-	"github.com/BitDSM/BitDSM-Node/db"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/motif-project/motif-node/PodManager"
+	"github.com/motif-project/motif-node/address"
+	"github.com/motif-project/motif-node/db"
 	"github.com/spf13/viper"
 )
 
