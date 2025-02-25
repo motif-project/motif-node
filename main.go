@@ -7,11 +7,11 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 
-	"github.com/BitDSM/BitDSM-Node/BtcDepositConfirmer"
-	"github.com/BitDSM/BitDSM-Node/api"
-	"github.com/BitDSM/BitDSM-Node/ethComms"
-	"github.com/BitDSM/BitDSM-Node/operator"
-	"github.com/BitDSM/BitDSM-Node/utils"
+	"github.com/motif-project/motif-node/BtcDepositConfirmer"
+	"github.com/motif-project/motif-node/api"
+	"github.com/motif-project/motif-node/ethComms"
+	"github.com/motif-project/motif-node/operator"
+	"github.com/motif-project/motif-node/utils"
 )
 
 func initialize() {

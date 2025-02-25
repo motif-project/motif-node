@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/BitDSM/BitDSM-Node/address"
-	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/gorilla/mux"
+	"github.com/motif-project/motif-node/address"
+	"github.com/motif-project/motif-node/utils"
 )
 
 type Service struct {

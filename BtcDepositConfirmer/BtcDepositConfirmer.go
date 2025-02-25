@@ -5,11 +5,11 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/BitDSM/BitDSM-Node/db"
-	"github.com/BitDSM/BitDSM-Node/ethComms"
-	"github.com/BitDSM/BitDSM-Node/utils"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
+	"github.com/motif-project/motif-node/db"
+	"github.com/motif-project/motif-node/ethComms"
+	"github.com/motif-project/motif-node/utils"
 	"github.com/spf13/viper"
 )
 

@@ -9,7 +9,6 @@ import (
 	"math"
 	"strings"
 
-	"github.com/BitDSM/BitDSM-Node/btcComms"
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chaincfg"
@@ -22,6 +21,7 @@ import (
 	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/btcsuite/btcutil/psbt"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/motif-project/motif-node/btcComms"
 	"github.com/spf13/viper"
 )
 

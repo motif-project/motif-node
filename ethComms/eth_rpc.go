@@ -11,13 +11,13 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/BitDSM/BitDSM-Node/BitDSMServiceManager"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/motif-project/motif-node/MotifServiceManager"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/sha3"
 )
@@ -261,7 +261,7 @@ func CallWithdrawBitcoinPSBT(podAddress string, withdrawAddress string, psbt str
 
 }
 
-func initializeServiceManagerContract() (*BitDSMServiceManager.BitDSMServiceManager, *ecdsa.PrivateKey, *bind.TransactOpts, error) {
+func initializeServiceManagerContract() (*MotifServiceManager.MotifServiceManager, *ecdsa.PrivateKey, *bind.TransactOpts, error) {
 	ethAccountOpr := LoadEthAccount()
 	client, err := GetEthClient()
 	if err != nil {
@@ -270,7 +270,7 @@ func initializeServiceManagerContract() (*BitDSMServiceManager.BitDSMServiceMana
 	}
 
 	contractAddress := common.HexToAddress(viper.GetString("service_manager_address"))
-	instance, err := BitDSMServiceManager.NewBitDSMServiceManager(contractAddress, client)
+	instance, err := MotifServiceManager.NewMotifServiceManager(contractAddress, client)
 	if err != nil {
 		fmt.Println("Failed to create contract instance: %v", err)
 		return nil, nil, nil, err
