@@ -1,8 +1,8 @@
-# BitDSM Node Setup Guide 🧪 ⚙️
+# Motif Node Setup Guide 🧪 ⚙️
 
 ## 1. Overview
 The architecture includes the following components:
-- **Event Manager**: A thread which registers to the events of `BitDSM` AVS contract.
+- **Event Manager**: A thread which registers to the events of `Motif` AVS contract.
 - **Deposit Checker**: A thread which confirms the BTC deposit form a BTC node . 
 - **Api Server**: An API server to create new multisig addresses and PSBTs. 
 - **bitcoind Offline Wallet**: An offline server that hosts a single wallet containing a signer BTC key. This server is used to sign PSBT transactions forwarded by the `API server`.
@@ -142,7 +142,7 @@ The config/config.json file contains various configuration settings required for
 ### 3.3 AVS Configuration
 - `opr_metadata_uri`: The URI for the OPR metadata (currently empty).
 - `eigen_delegation_manager_address`: The Ethereum address of the Eigen Delegation Manager contract.
-- `bitdsm_registry_address`: The Ethereum address of the BitDSM Registry contract.
+- `motif_registry_address`: The Ethereum address of the Motif Registry contract.
 - `service_manager_address`: The Ethereum address of the Service Manager contract.
 - `eigen_avs_directory_address`: The Ethereum address of the Eigen AVS Directory contract.
 - `pod_manager_address`: The Ethereum address of the Pod Manager contract
@@ -156,13 +156,13 @@ The config/config.json file contains various configuration settings required for
 This configuration file should be updated with the appropriate values for your specific setup. Ensure that sensitive information such as passwords and private keys are securely managed.
 
 ### 3.5. Contract addresses
-The contract addresses for the deployed contracts are available on the [BitDSM repo.](https://github.com/BitDSM/BitDSM/blob/implement-v1-ecdsa/README.md#existing-holesky-testnet-deployment) 
+The contract addresses for the deployed contracts are available on the [Motif repo.](https://github.com/motif-project/motif-node) 
 
 
 ## 4. Eth Wallet Setup
 The System Uses the go-ethereum library's keystore save keys. if there is no keystore file in the directory (mentioned in config file) the system will generate a new key and save it in a newly created keystore located at the mentioned directory encrypted with the password mentioned in config file. 
 
-If you have a Private key you want to use specifically, you can use the code snippet below to create a keystore before you run BitDSM Operator.
+If you have a Private key you want to use specifically, you can use the code snippet below to create a keystore before you run Motif Operator.
 
 ```go
 package main
