@@ -1,3 +1,12 @@
+Motif Node is the core infrastructure component of the Motif Protocol — a decentralized platform enabling Bitcoin liquidity providers to create DTPs. It facilitates the seamless locking of Bitcoin through Bitcoin Pods, which is secured by EigenLayer shared services.
+
+The node is responsible for: 
+  - Managing Bitcoin deposits and their representation on Ethereum.
+  - Interacting with EigenLayer for shared security.
+  - Supporting vault strategies that generate yield through integrated DeFi protocols.
+
+This repository contains the core logic for running a Motif Node, including smart contract interactions, on-chain operations, and node management tools.
+
 # Motif Node Setup Guide 🧪 ⚙️
 
 ## 1. Overview
@@ -11,7 +20,9 @@ The architecture includes the following components:
 
 **For a production environment, it is highly recommended to deploy the bitcoind Offline Wallet and the nyks Full Node/btc-oracle on separate hosts**.
 
-The btc-oracle offline signer design is based on remote signing available in `bitcoind` and `lnd`. Signer mode, however, does not require a BTC full node connection as the signer is not responsible for creating or broadcasting transactions.
+The btc-oracle offline signer design is based on remote signing available in `bitcoind` and `lnd`. 
+
+Signer mode, however, does not require a BTC full node connection as the signer is not responsible for creating or broadcasting transactions.
 
 References:
 - [Bitcoind: Managing the Wallet](https://github.com/bitcoin/bitcoin/blob/master/doc/managing-wallets.md)
