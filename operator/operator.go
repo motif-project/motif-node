@@ -5,13 +5,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"math/big"
-	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/motif-project/motif-node/AvsDirectory"
 	"github.com/motif-project/motif-node/MotifRegistry"
 	"github.com/motif-project/motif-node/ethComms"
 	"github.com/motif-project/motif-node/utils"
@@ -122,41 +118,41 @@ func RegisterOperator() {
 	}
 
 	// Set expiry to 24 hours from now
-	expiry := big.NewInt(time.Now().Add(24 * time.Hour).Unix())
+	// expiry := big.NewInt(time.Now().Add(24 * time.Hour).Unix())
 
-	var saltArray [32]byte
-	copy(saltArray[:], salt)
+	// var saltArray [32]byte
+	// copy(saltArray[:], salt)
 
-	avsDirectoryAddress := common.HexToAddress(viper.GetString("eigen_avs_directory_address"))
-	avsDirectory, err := AvsDirectory.NewAvsDirectory(avsDirectoryAddress, client)
-	if err != nil {
-		fmt.Println("failed to initialize AVS directory contract: ", err)
-		return
-	}
+	// avsDirectoryAddress := common.HexToAddress(viper.GetString("eigen_avs_directory_address"))
+	// avsDirectory, err := AvsDirectory.NewAvsDirectory(avsDirectoryAddress, client)
+	// if err != nil {
+	// 	fmt.Println("failed to initialize AVS directory contract: ", err)
+	// 	return
+	// }
 
-	serviceManagerAddr := common.HexToAddress(viper.GetString("service_manager_address"))
-	fmt.Println("serviceManagerAddr: ", serviceManagerAddr)
-	digestHash, err := avsDirectory.CalculateOperatorAVSRegistrationDigestHash(
-		&bind.CallOpts{},
-		auth.From, // operator address
-		serviceManagerAddr,
-		saltArray, // random salt
-		expiry,    // expiry timestamp
-	)
-	if err != nil {
-		fmt.Println("failed to calculate digest hash: ", err)
-		return
-	}
-	signature, err := crypto.Sign(digestHash[:], privateKey)
-	if err != nil {
-		fmt.Println("failed to sign digest hash: ", err)
-		return
-	}
+	// serviceManagerAddr := common.HexToAddress(viper.GetString("service_manager_address"))
+	// fmt.Println("serviceManagerAddr: ", serviceManagerAddr)
+	// digestHash, err := avsDirectory.CalculateOperatorAVSRegistrationDigestHash(
+	// 	&bind.CallOpts{},
+	// 	auth.From, // operator address
+	// 	serviceManagerAddr,
+	// 	saltArray, // random salt
+	// 	expiry,    // expiry timestamp
+	// )
+	// if err != nil {
+	// 	fmt.Println("failed to calculate digest hash: ", err)
+	// 	return
+	// }
+	// signature, err := crypto.Sign(digestHash[:], privateKey)
+	// if err != nil {
+	// 	fmt.Println("failed to sign digest hash: ", err)
+	// 	return
+	// }
 
-	fmt.Println("signature: ", signature)
-	if signature[64] < 27 {
-		signature[64] += 27
-	}
+	// fmt.Println("signature: ", signature)
+	// if signature[64] < 27 {
+	// 	signature[64] += 27
+	// }
 
 	// operatorSignature := MotifRegistry.ISignatureUtilsSignatureWithSaltAndExpiry{
 	// 	Signature: signature, // Your signature bytes
