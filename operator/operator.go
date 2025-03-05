@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/motif-project/motif-node/AvsDirectory"
-	"github.com/motif-project/motif-node/DelegationManager"
 	"github.com/motif-project/motif-node/MotifRegistry"
 	"github.com/motif-project/motif-node/ethComms"
 	"github.com/motif-project/motif-node/utils"
@@ -27,6 +26,7 @@ func RegisterOperator() {
 	}
 
 	ethAccountOpr := ethComms.LoadEthAccount()
+	fmt.Println("Opr account: ", ethAccountOpr.Address.Hex())
 	privateKey, err := ethComms.GetPrivateKeyFromKeyStore(ethAccountOpr, viper.GetString("eth_keystore_passphrase"))
 	if err != nil {
 		fmt.Println("Failed to get private key: ", err)
@@ -46,52 +46,53 @@ func RegisterOperator() {
 		return
 	}
 
-	operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
-		DeprecatedEarningsReceiver: ethAccountOpr.Address, // or specify an address to receive earnings
-		DelegationApprover:         ethAccountOpr.Address, // or specify an approver address
-		StakerOptOutWindowBlocks:   0,                     // or specify your preferred window
-	}
+	// operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
+	// 	DeprecatedEarningsReceiver: ethAccountOpr.Address, // or specify an address to receive earnings
+	// 	DelegationApprover:         ethAccountOpr.Address, // or specify an approver address
+	// 	StakerOptOutWindowBlocks:   0,                     // or specify your preferred window
+	// }
 
-	delegationManagerAddr := common.HexToAddress(viper.GetString("eigen_delegation_manager_address"))
+	// delegationManagerAddr := common.HexToAddress(viper.GetString("eigen_delegation_manager_address"))
 
-	delegationManager, err := DelegationManager.NewDelegationManager(delegationManagerAddr, client)
-	if err != nil {
-		fmt.Println("failed to initialize delegation manager: ", err)
-		return
-	}
-	// Check if operator is already registered in EigenLayer
-	fmt.Println("auth.From: ", auth.From)
-	registeredOperator, err := delegationManager.IsOperator(&bind.CallOpts{}, auth.From)
-	if err != nil {
-		fmt.Println("Failed to check operator registration: ", err)
-		return
-	}
+	// delegationManager, err := DelegationManager.NewDelegationManager(delegationManagerAddr, client)
+	// if err != nil {
+	// 	fmt.Println("failed to initialize delegation manager: ", err)
+	// 	return
+	// }
+	// // Check if operator is already registered in EigenLayer
+	// fmt.Println("auth.From: ", auth.From)
+	// registeredOperator, err := delegationManager.IsOperator(&bind.CallOpts{}, auth.From)
+	// if err != nil {
+	// 	fmt.Println("Failed to check operator registration: ", err)
+	// 	return
+	// }
 
-	if !registeredOperator {
-		fmt.Println("Registering Operator to EigenLayer")
-		tx, err := delegationManager.RegisterAsOperator(
-			auth,
-			operatorDetails,                     // operator address
-			viper.GetString("opr_metadata_uri"), // metadata URI
-		)
-		if err != nil {
-			fmt.Println("Error in registering as operator: ", err)
-			panic(err)
-		}
-		receipt, err := bind.WaitMined(context.Background(), client, tx)
-		if err != nil {
-			fmt.Println("Failed to wait for transaction receipt: ", err)
-			panic(err)
-		}
-		if receipt.Status == 1 {
-			fmt.Println("Operator registered to Core EigenLayer contracts")
-		} else {
-			fmt.Println("Transaction failed: ", receipt)
-			panic("Operator registration failed")
-		}
-	} else {
-		fmt.Println("Operator already registered to EigenLayer")
-	}
+	// if !registeredOperator {
+	// 	fmt.Println("Registering Operator to EigenLayer")
+	// 	tx, err := delegationManager.RegisterAsOperator(
+	// 		auth,
+	// 		operatorDetails,                     // operator address
+	// 		viper.GetString("opr_metadata_uri"), // metadata URI
+	// 	)
+	// 	if err != nil {
+	// 		fmt.Println("Error in registering as operator: ", err)
+	// 		fmt.Println("extra info : ", tx)
+	// 		panic(err)
+	// 	}
+	// 	receipt, err := bind.WaitMined(context.Background(), client, tx)
+	// 	if err != nil {
+	// 		fmt.Println("Failed to wait for transaction receipt: ", err)
+	// 		panic(err)
+	// 	}
+	// 	if receipt.Status == 1 {
+	// 		fmt.Println("Operator registered to Core EigenLayer contracts")
+	// 	} else {
+	// 		fmt.Println("Transaction failed: ", receipt)
+	// 		panic("Operator registration failed")
+	// 	}
+	// } else {
+	// 	fmt.Println("Operator already registered to EigenLayer")
+	// }
 
 	// registering with AVS
 	MotifStakeRegistryAddr := common.HexToAddress(viper.GetString("motif_registry_address"))
@@ -157,11 +158,11 @@ func RegisterOperator() {
 		signature[64] += 27
 	}
 
-	operatorSignature := MotifRegistry.ISignatureUtilsSignatureWithSaltAndExpiry{
-		Signature: signature, // Your signature bytes
-		Salt:      saltArray,
-		Expiry:    expiry,
-	}
+	// operatorSignature := MotifRegistry.ISignatureUtilsSignatureWithSaltAndExpiry{
+	// 	Signature: signature, // Your signature bytes
+	// 	Salt:      saltArray,
+	// 	Expiry:    expiry,
+	// }
 
 	// Register operator
 	key := viper.GetString("btc_xpublic_key")
@@ -178,12 +179,10 @@ func RegisterOperator() {
 	}
 	tx, err := motifRegistry.RegisterOperatorWithSignature(
 		auth,
-		operatorSignature,
-		auth.From,
 		pubkeyBytes,
 	)
 	if err != nil {
-		fmt.Println("failed to register operator: ", err)
+		fmt.Println("failed to register operator to an AVS: ", err)
 		return
 	}
 
