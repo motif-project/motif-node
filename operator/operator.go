@@ -50,11 +50,11 @@ func RegisterOperator() {
 		return
 	}
 
-	operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
-		DeprecatedEarningsReceiver: ethAccountOpr.Address, // or specify an address to receive earnings
-		DelegationApprover:         ethAccountOpr.Address, // or specify an approver address
-		StakerOptOutWindowBlocks:   0,                     // or specify your preferred window
-	}
+	// operatorDetails := DelegationManager.OperatorDetails{
+	// 	DeprecatedEarningsReceiver: ethAccountOpr.Address, // or specify an address to receive earnings
+	// 	DelegationApprover:         ethAccountOpr.Address, // or specify an approver address
+	// 	StakerOptOutWindowBlocks:   0,                     // or specify your preferred window
+	// }
 
 	delegationManagerAddr := common.HexToAddress(viper.GetString("eigen_delegation_manager_address"))
 
@@ -75,7 +75,8 @@ func RegisterOperator() {
 		fmt.Println("Registering Operator to EigenLayer")
 		tx, err := delegationManager.RegisterAsOperator(
 			auth,
-			operatorDetails,                     // operator address
+			ethAccountOpr.Address,
+			0,                                   // operator address
 			viper.GetString("opr_metadata_uri"), // metadata URI
 		)
 		if err != nil {
