@@ -1,13 +1,17 @@
 package operator
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math/big"
+	"net/http"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -197,5 +201,43 @@ func RegisterOperator() {
 	}
 
 	fmt.Println("Successfully registered operator with AVS")
+	register_on_listings(ethAccountOpr)
+}
 
+func register_on_listings(account accounts.Account) {
+	url := "http://159.203.34.1:8000/operator"
+	contentType := "application/json"
+
+	// Create the request body
+	data := map[string]string{
+		"logo_uri":    viper.GetString("opr_logo_uri"),
+		"ip_address":  viper.GetString("opr_ip_address"),
+		"name":        viper.GetString("opr_name"),
+		"eth_address": account.Address.Hex(),
+	}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return
+	}
+
+	// Create the HTTP request
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	// Send the HTTP request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error sending request:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Print the response status
+	fmt.Println("Response status:", resp.Status)
 }
