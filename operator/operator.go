@@ -240,4 +240,5 @@ func register_on_listings(account accounts.Account) {
 
 	// Print the response status
 	fmt.Println("Response status:", resp.Status)
+	fmt.Println("Registered operator with listings")
 }
