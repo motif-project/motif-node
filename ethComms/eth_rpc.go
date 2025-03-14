@@ -228,11 +228,13 @@ func CallWithdrawBitcoinPSBT(podAddress string, withdrawAddress string, psbt str
 		return "", err
 	}
 
-	withdrawAddressBytes, err := hex.DecodeString(withdrawAddress)
-	if err != nil {
-		fmt.Println("failed to decode withdraw address")
-		return "", err
-	}
+	// withdrawAddressBytes, err := hex.DecodeString(withdrawAddress)
+	// if err != nil {
+	// 	fmt.Println("failed to decode withdraw address : ", err)
+	// 	return "", err
+	// }
+
+	withdrawAddressBytes := []byte(withdrawAddress)
 
 	hash := crypto.Keccak256Hash(
 		common.HexToAddress(podAddress).Bytes(),
