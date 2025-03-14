@@ -113,12 +113,6 @@ func RegisterOperator() {
 		return
 	}
 
-	tx, err := motifRegistry.DeregisterOperator(auth)
-	if err != nil {
-		fmt.Println("failed to deregister operator: ", err)
-		return
-	}
-
 	_, err = motifRegistry.DeregisterOperator(auth)
 	if err != nil {
 		fmt.Println("failed to deregister operator: ", err)
@@ -201,7 +195,7 @@ func RegisterOperator() {
 		fmt.Println("failed to derive public key: ", err)
 		return
 	}
-	tx, err = motifRegistry.RegisterOperatorWithSignature(
+	tx, err := motifRegistry.RegisterOperatorWithSignature(
 		auth,
 		operatorSignature,
 		auth.From,
