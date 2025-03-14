@@ -113,11 +113,11 @@ func RegisterOperator() {
 		return
 	}
 
-	_, err = motifRegistry.DeregisterOperator(auth)
-	if err != nil {
-		fmt.Println("failed to deregister operator: ", err)
-		return
-	}
+	// _, err = motifRegistry.DeregisterOperator(auth)
+	// if err != nil {
+	// 	fmt.Println("failed to deregister operator: ", err)
+	// 	return
+	// }
 
 	fmt.Println("Deregistered operator from AVS")
 
