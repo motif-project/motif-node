@@ -113,6 +113,20 @@ func RegisterOperator() {
 		return
 	}
 
+	tx, err := motifRegistry.DeregisterOperator(auth)
+	if err != nil {
+		fmt.Println("failed to deregister operator: ", err)
+		return
+	}
+
+	_, err = motifRegistry.DeregisterOperator(auth)
+	if err != nil {
+		fmt.Println("failed to deregister operator: ", err)
+		return
+	}
+
+	fmt.Println("Deregistered operator from AVS")
+
 	// Check if operator is already registered in AVS
 	registered, err := motifRegistry.OperatorRegistered(&bind.CallOpts{}, auth.From)
 	if err != nil {
@@ -187,7 +201,7 @@ func RegisterOperator() {
 		fmt.Println("failed to derive public key: ", err)
 		return
 	}
-	tx, err := motifRegistry.RegisterOperatorWithSignature(
+	tx, err = motifRegistry.RegisterOperatorWithSignature(
 		auth,
 		operatorSignature,
 		auth.From,
