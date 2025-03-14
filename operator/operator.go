@@ -209,12 +209,21 @@ func register_on_listings(account accounts.Account) {
 	url := "http://159.203.34.1:8000/operator"
 	contentType := "application/json"
 
+	oprXPubKey := viper.GetString("btc_xpublic_key")
+	oprXPubKey = utils.CleanXpubKey(oprXPubKey)
+	oprPubKey, err := utils.DerivePublicKey(oprXPubKey, 0)
+	if err != nil {
+		fmt.Println("error in deriving public key : ", err)
+		panic(err)
+	}
+
 	// Create the request body
 	data := map[string]string{
-		"logo_uri":    viper.GetString("opr_logo_uri"),
-		"ip_address":  viper.GetString("opr_ip_address"),
-		"name":        viper.GetString("opr_name"),
-		"eth_address": account.Address.Hex(),
+		"logo_uri":       viper.GetString("opr_logo_uri"),
+		"ip_address":     viper.GetString("opr_ip_address"),
+		"name":           viper.GetString("opr_name"),
+		"eth_address":    account.Address.Hex(),
+		"btc_public_key": oprPubKey,
 	}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
