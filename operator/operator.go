@@ -74,7 +74,8 @@ func RegisterOperator() {
 	if !registeredOperator {
 		fmt.Println("Registering Operator to EigenLayer")
 
-		operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{ // or specify an address to receive earnings
+		operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
+			EarningsReceiver:         ethAccountOpr.Address, // or specify an address to receive earnings
 			DelegationApprover:       ethAccountOpr.Address, // or specify an approver address
 			StakerOptOutWindowBlocks: 0,                     // or specify your preferred window
 		}
