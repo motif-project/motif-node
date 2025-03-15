@@ -74,15 +74,16 @@ func RegisterOperator() {
 	if !registeredOperator {
 		fmt.Println("Registering Operator to EigenLayer")
 
-		operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
-			EarningsReceiver:         ethAccountOpr.Address, // or specify an address to receive earnings
-			DelegationApprover:       ethAccountOpr.Address, // or specify an approver address
-			StakerOptOutWindowBlocks: 0,                     // or specify your preferred window
-		}
+		// operatorDetails := DelegationManager.IDelegationManagerOperatorDetails{
+		// 	EarningsReceiver:         ethAccountOpr.Address, // or specify an address to receive earnings
+		// 	DelegationApprover:       ethAccountOpr.Address, // or specify an approver address
+		// 	StakerOptOutWindowBlocks: 0,                     // or specify your preferred window
+		// }
 
 		tx, err := delegationManager.RegisterAsOperator(
 			auth,
-			operatorDetails,                     // operator address
+			ethAccountOpr.Address,
+			0,                                   // operator address
 			viper.GetString("opr_metadata_uri"), // metadata URI
 		)
 		if err != nil {
