@@ -120,7 +120,7 @@ func RegisterOperator() {
 	// 	return
 	// }
 
-	fmt.Println("Deregistered operator from AVS")
+	// fmt.Println("Deregistered operator from AVS")
 
 	// Check if operator is already registered in AVS
 	registered, err := motifRegistry.OperatorRegistered(&bind.CallOpts{}, auth.From)

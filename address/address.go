@@ -47,6 +47,16 @@ func GenerateSimpleMultisigAddress(depositorPubKey string, podEthAddress string)
 
 	fmt.Println("Address : ", addressInfo)
 
+	oldAddress := db.QueryMultisigAddresses(dbconn)
+
+	for _, addr := range oldAddress {
+		if addr.Address == address {
+			fmt.Println("Address already exists")
+			fmt.Println("Multisig address script : ", addressInfo.Hex)
+			return address, addressInfo.Hex, nil
+		}
+	}
+
 	err = db.InsertMultiSigAddress(dbconn, address, addressInfo.Hex, podEthAddress)
 	dbconn.Close()
 	if err != nil {

@@ -110,6 +110,7 @@ func GetRawTransaction(txid string) (*btcjson.TxRawResult, error) {
 	}
 	tx, err := client.GetRawTransactionVerbose(txHash)
 	if err != nil {
+		fmt.Println("tx: ", tx)
 		fmt.Println("Failed to get raw transaction: ", err)
 		return nil, err
 	}

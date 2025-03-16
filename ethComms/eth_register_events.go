@@ -165,7 +165,7 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 
 	dbconn := db.InitDB()
 	defer dbconn.Close()
-	addrBytes, _ := hex.DecodeString(event.WithdrawAddress)
+	addrBytes := []byte(event.WithdrawAddress)
 	if err != nil {
 		fmt.Println("Error converting withdraw address to bytes : ", err)
 		return

@@ -29,7 +29,7 @@ func CheckDeposit() {
 			if err != nil {
 				continue
 			}
-			if tx.Confirmations <= 2 {
+			if tx.Confirmations <= 1 {
 				continue
 			}
 
@@ -89,7 +89,7 @@ func CheckWithdraw() {
 			if err != nil {
 				continue
 			}
-			if tx.Confirmations <= 2 {
+			if tx.Confirmations <= 1 {
 				continue
 			}
 
