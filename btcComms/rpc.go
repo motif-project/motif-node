@@ -298,7 +298,7 @@ func UtxoUpdatePsbt(psbtStr string, desc string, wallet string) (string, error) 
 
 func CreatePsbtV1(utxo TxInput, outputs []TxOutput, unlockHeight uint32, scriptPubKey []byte, amount int64) (*psbt.Packet, error) {
 	// Create a new PSBT
-	chainParams, err := getChainParams()
+	chainParams, err := GetChainParams()
 	if err != nil {
 		return nil, err
 	}
@@ -431,7 +431,7 @@ func SignRawTransaction(tx string, wallet string) (string, error) {
 	return response.Result.Hex, nil
 }
 
-func getChainParams() (*chaincfg.Params, error) {
+func GetChainParams() (*chaincfg.Params, error) {
 	env := viper.GetString("env")
 	if env == "dev" {
 		return &chaincfg.SigNetParams, nil

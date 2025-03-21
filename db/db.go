@@ -218,3 +218,51 @@ func QueryWithdrawRequests(dbconn *sql.DB) []types.BtcWithDrawRequest {
 	}
 	return withdrawRequests
 }
+
+func InsertPresignedTx(dbconn *sql.DB, podaddr string, tx string) error {
+	_, err := dbconn.Exec("INSERT into presign_tx VALUES ($1, $2, $3)",
+		podaddr,
+		tx,
+		false,
+	)
+	if err != nil {
+		fmt.Println("An error occured while executing insert presign query: ", err)
+		return err
+	}
+	return nil
+}
+
+func QueryPresignedTxfromPod(dbconn *sql.DB, podaddr string) (string, error) {
+	// Execute the query
+	DB_reader, err := dbconn.Query("select tx from presign_tx where pod_address = $1 and archived = false limit 1", podaddr)
+	if err != nil {
+		fmt.Println("An error occurred while querying presigned tx: ", err)
+		return "", err
+	}
+	defer DB_reader.Close() // Ensure the reader is closed
+
+	var presignTx string
+	// Iterate through the result set
+	for DB_reader.Next() {
+		err := DB_reader.Scan(&presignTx)
+		if err != nil {
+			fmt.Println("An error occurred while scanning presigned tx: ", err)
+			return "", err
+		}
+	}
+
+	// Check for errors after iteration
+	if err = DB_reader.Err(); err != nil {
+		fmt.Println("An error occurred during DB iteration: ", err)
+		return "", err
+	}
+
+	return presignTx, nil
+}
+
+func MarkPresignConfirmed(dbconn *sql.DB, podAddr string) {
+	_, err := dbconn.Exec("UPDATE presign_tx SET archived = true WHERE pod_address = $1", podAddr)
+	if err != nil {
+		fmt.Println("An error occured while updating presign query: ", err)
+	}
+}

@@ -15,7 +15,7 @@ import (
 
 func CheckDeposit() {
 	fmt.Println("starting check deposit process")
-	chainParams, err := getChainParams()
+	chainParams, err := GetChainParams()
 	if err != nil {
 		return
 	}
@@ -109,7 +109,7 @@ func CheckWithdraw() {
 
 }
 
-func getChainParams() (*chaincfg.Params, error) {
+func GetChainParams() (*chaincfg.Params, error) {
 	env := viper.GetString("env")
 	if env == "dev" {
 		return &chaincfg.SigNetParams, nil

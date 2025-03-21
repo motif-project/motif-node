@@ -15,6 +15,7 @@ import (
 	"github.com/motif-project/motif-node/PodManager"
 	"github.com/motif-project/motif-node/address"
 	"github.com/motif-project/motif-node/db"
+	"github.com/motif-project/motif-node/utils"
 	"github.com/spf13/viper"
 )
 
@@ -65,6 +66,58 @@ func SubscribeToDepositRequests() {
 		case event := <-ch:
 			if event.Operator == oprEthAccount.Address {
 				handleDepositRequest(event)
+			}
+		}
+	}
+}
+
+func SubscribeToPresignedDepositRequests() {
+	// Create a new instance of the contract binding
+
+	oprEthAccount := LoadEthAccount()
+	client, err := rpc.Dial(viper.GetString("eth_ws_host"))
+	if err != nil {
+		log.Fatalf("Failed to connect to the Ethereum client: %v", err)
+	}
+
+	ethClient := ethclient.NewClient(client)
+	defer ethClient.Close()
+	defer client.Close()
+
+	podManagerAddr := common.HexToAddress(viper.GetString("pod_manager_address"))
+	podManager, err := PodManager.NewPodManager(podManagerAddr, ethClient)
+	if err != nil {
+		fmt.Println("Failed to instantiate contract:", err)
+		panic(err)
+	}
+
+	// Create a channel for the events
+	ch := make(chan *PodManager.PodManagerVerifyPresignedBitcoinDepositRequest)
+
+	// Create a subscription
+	sub, err := podManager.WatchVerifyPresignedBitcoinDepositRequest(
+		&bind.WatchOpts{Context: context.Background()},
+		ch,
+		[]common.Address{},
+		[]common.Address{oprEthAccount.Address},
+	)
+	if err != nil {
+		fmt.Println("Failed to subscribe to events:", err)
+		panic(err)
+	}
+
+	fmt.Println("Successfully subscribed to VerifyBitcoinDepositRequest Presigned events")
+
+	// Handle events in a loop
+	for {
+		select {
+		case err := <-sub.Err():
+			fmt.Println("Subscription error deposit:", err)
+			time.Sleep(1 * time.Minute)
+
+		case event := <-ch:
+			if event.Operator == oprEthAccount.Address {
+				handlePresignedDepositRequest(event)
 			}
 		}
 	}
@@ -123,6 +176,59 @@ func SubscribeToWithdrawRequests() {
 	}
 }
 
+func SubscribeToWithdrawPresignRequests() {
+	// Create a new instance of the contract binding
+
+	oprEthAccount := LoadEthAccount()
+	client, err := rpc.Dial(viper.GetString("eth_ws_host"))
+	if err != nil {
+		log.Fatalf("Failed to connect to the Ethereum client: %v", err)
+	}
+
+	ethClient := ethclient.NewClient(client)
+	defer ethClient.Close()
+	defer client.Close()
+
+	podManagerAddr := common.HexToAddress(viper.GetString("pod_manager_address"))
+	podManager, err := PodManager.NewPodManager(podManagerAddr, ethClient)
+	if err != nil {
+		fmt.Println("Failed to instantiate contract:", err)
+		panic(err)
+	}
+
+	// Create a channel for the events
+	ch := make(chan *PodManager.PodManagerWithdrawPresignedBitcoinRequest)
+
+	// Create a subscription
+	sub, err := podManager.WatchWithdrawPresignedBitcoinRequest(
+		&bind.WatchOpts{Context: context.Background()},
+		ch,
+		[]common.Address{},
+		[]common.Address{oprEthAccount.Address},
+	)
+	if err != nil {
+		fmt.Println("Failed to subscribe to events:", err)
+		panic(err)
+	}
+
+	fmt.Println("Successfully subscribed to Withdrawal presign events")
+
+	// Handle events in a loop
+	for {
+		select {
+		case err := <-sub.Err():
+			fmt.Println("Subscription error withdrawal presign:", err)
+			time.Sleep(1 * time.Minute)
+
+		case event := <-ch:
+			if event.Operator == oprEthAccount.Address {
+				HandlePresignedWithdrawalRequest(event)
+				continue
+			}
+		}
+	}
+}
+
 func handleDepositRequest(event *PodManager.PodManagerVerifyBitcoinDepositRequest) {
 	fmt.Println("got a deposit event with data : ", event.BitcoinDepositRequest)
 	fmt.Println(event.Operator)
@@ -136,6 +242,42 @@ func handleDepositRequest(event *PodManager.PodManagerVerifyBitcoinDepositReques
 
 	transactionId := hex.EncodeToString(event.BitcoinDepositRequest.TransactionId[:])
 	db.InsertDepositRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), transactionId, event.BitcoinDepositRequest.Amount)
+
+}
+
+func handlePresignedDepositRequest(event *PodManager.PodManagerVerifyPresignedBitcoinDepositRequest) {
+	fmt.Println("got a deposit event with presigned data : ", event.BitcoinDepositRequest)
+	fmt.Println(event.Operator)
+	fmt.Println(event.Pod)
+	dbconn := db.InitDB()
+	defer dbconn.Close()
+
+	multisigAddress := db.QueryMultisigAddressByPodAddress(dbconn, event.Pod.Hex())
+	if len(multisigAddress) == 0 {
+		fmt.Println("No multisig address found for pod : ", event.Pod.Hex())
+		return
+	}
+
+	tx := event.Transaction
+	txHex := hex.EncodeToString(tx)
+
+	verified, transactionId, err := utils.VerifyPresignTransaction(txHex, multisigAddress[0].Address, *event.BitcoinDepositRequest.Amount)
+	if err != nil {
+		fmt.Println("Error verifying transaction signatures : ", err)
+		return
+	}
+	if !verified {
+		fmt.Println("Transaction signatures not verified")
+		return
+	}
+
+	_, err = CallConfirmBtcDeposit(event.Pod.Hex(), event.Operator.Hex(), transactionId, *event.BitcoinDepositRequest.Amount)
+	if err != nil {
+		fmt.Println("Failed to call confirm btc deposit presign: ", err)
+		return
+	}
+
+	db.InsertPresignedTx(dbconn, event.Pod.Hex(), txHex)
 
 }
 
@@ -172,4 +314,29 @@ func HandleWithdrawalRequest(event *PodManager.PodManagerBitcoinWithdrawalPSBTRe
 	}
 	db.InsertWithDrawRequest(dbconn, event.Pod.Hex(), event.Operator.Hex(), txid, addrBytes)
 
+}
+
+func HandlePresignedWithdrawalRequest(event *PodManager.PodManagerWithdrawPresignedBitcoinRequest) {
+	fmt.Println("got an withdrawal event with presigned data : ", event.WithdrawAddress)
+	fmt.Println(event.Operator)
+	fmt.Println(event.Pod)
+	fmt.Println(event.WithdrawAddress)
+
+	dbconn := db.InitDB()
+	defer dbconn.Close()
+	tx, err := db.QueryPresignedTxfromPod(dbconn, event.Pod.Hex())
+	if err != nil {
+		fmt.Println("Error querying presigned tx : ", err)
+		return
+	}
+
+	addrBytes := []byte(event.WithdrawAddress)
+
+	_, err = CallConfirmBtcWithdraw(event.Pod.Hex(), event.Operator.Hex(), tx, addrBytes)
+	if err != nil {
+		fmt.Println("Failed to call confirm btc withdraw presign: ", err)
+		return
+	}
+
+	db.MarkPresignConfirmed(dbconn, event.Pod.Hex())
 }
