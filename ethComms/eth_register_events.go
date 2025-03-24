@@ -14,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/motif-project/motif-node/PodManager"
 	"github.com/motif-project/motif-node/address"
-	"github.com/motif-project/motif-node/btcComms"
 	"github.com/motif-project/motif-node/db"
 	"github.com/motif-project/motif-node/utils"
 	"github.com/spf13/viper"
@@ -101,7 +100,6 @@ func SubscribeToPresignedDepositRequests() {
 		ch,
 		[]common.Address{},
 		[]common.Address{oprEthAccount.Address},
-		[]string{},
 	)
 	if err != nil {
 		fmt.Println("Failed to subscribe to events:", err)
@@ -254,37 +252,23 @@ func handlePresignedDepositRequest(event *PodManager.PodManagerVerifyPresignedBi
 	dbconn := db.InitDB()
 	defer dbconn.Close()
 
-	params, err := btcComms.GetChainParams()
-	if err != nil {
-		fmt.Println("Error getting chain params : ", err)
-		return
-	}
+	fmt.Println("Multisig address Presign: ", event.PodBtcAddress)
 
-	addressBytes := event.PodBtcAddress.Bytes()
-	addressHex := hex.EncodeToString(addressBytes)
-	BtcAddress, err := utils.HexToBech32(addressHex, params)
-	if err != nil {
-		fmt.Println("Error converting address to bech32 : ", err)
-		return
-	}
-
-	fmt.Println("Multisig address Presign: ", BtcAddress)
-
-	exists, err := db.CheckIfMultiSigAddressExists(dbconn, BtcAddress)
+	exists, err := db.CheckIfMultiSigAddressExists(dbconn, event.PodBtcAddress)
 	if err != nil {
 		fmt.Println("Error checking if multisig address exists : ", err)
 		return
 	}
 
 	if !exists {
-		fmt.Println("Multisig address does not exist")
+		fmt.Println("Multisig address does not match")
 		return
 	}
 
 	tx := event.Transaction
 	txHex := hex.EncodeToString(tx)
 
-	verified, _, err := utils.VerifyPresignTransaction(txHex, BtcAddress, *event.BitcoinDepositRequest.Amount)
+	verified, _, err := utils.VerifyPresignTransaction(txHex, event.PodBtcAddress, *event.BitcoinDepositRequest.Amount)
 	if err != nil {
 		fmt.Println("Error verifying transaction signatures : ", err)
 		return
