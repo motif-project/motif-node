@@ -358,6 +358,12 @@ func VerifyPresignTransaction(txHex string, outputAddr string, amount big.Int) (
 	client := getBitcoinRpcClient()
 	defer client.Shutdown()
 
+	params, err := btcComms.GetChainParams()
+	if err != nil {
+		fmt.Println("Failed to get chain params: ", err)
+		return false, "", fmt.Errorf("failed to get chain params: %v", err)
+	}
+
 	allowed, err := btcComms.TestMempoolAccept(txHex, viper.GetString("wallet_name"))
 	if err != nil {
 		fmt.Println("Failed to call testmempoolaccept: ", err)
@@ -383,7 +389,7 @@ func VerifyPresignTransaction(txHex string, outputAddr string, amount big.Int) (
 	// Check if any output matches the given address and amount
 	matched := false
 	for _, out := range tx.TxOut {
-		_, addresses, _, err := txscript.ExtractPkScriptAddrs(out.PkScript, &chaincfg.MainNetParams)
+		_, addresses, _, err := txscript.ExtractPkScriptAddrs(out.PkScript, params)
 		if err != nil {
 			return false, "", fmt.Errorf("failed to extract address from PkScript: %v", err)
 		}
