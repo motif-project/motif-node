@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/motif-project/motif-node/PodManager"
 	"github.com/motif-project/motif-node/address"
+	"github.com/motif-project/motif-node/btcComms"
 	"github.com/motif-project/motif-node/db"
 	"github.com/motif-project/motif-node/utils"
 	"github.com/spf13/viper"
@@ -100,6 +101,7 @@ func SubscribeToPresignedDepositRequests() {
 		ch,
 		[]common.Address{},
 		[]common.Address{oprEthAccount.Address},
+		[]string{},
 	)
 	if err != nil {
 		fmt.Println("Failed to subscribe to events:", err)
@@ -252,16 +254,35 @@ func handlePresignedDepositRequest(event *PodManager.PodManagerVerifyPresignedBi
 	dbconn := db.InitDB()
 	defer dbconn.Close()
 
-	multisigAddress := db.QueryMultisigAddressByPodAddress(dbconn, event.Pod.Hex())
-	if len(multisigAddress) == 0 {
-		fmt.Println("No multisig address found for pod : ", event.Pod.Hex())
+	params, err := btcComms.GetChainParams()
+	if err != nil {
+		fmt.Println("Error getting chain params : ", err)
+		return
+	}
+
+	addressBytes := event.PodBtcAddress.Bytes()
+	addressHex := hex.EncodeToString(addressBytes)
+	BtcAddress, err := utils.HexToBech32(addressHex, params)
+	if err != nil {
+		fmt.Println("Error converting address to bech32 : ", err)
+		return
+	}
+
+	exists, err := db.CheckIfMultiSigAddressExists(dbconn, BtcAddress)
+	if err != nil {
+		fmt.Println("Error checking if multisig address exists : ", err)
+		return
+	}
+
+	if !exists {
+		fmt.Println("Multisig address does not exist")
 		return
 	}
 
 	tx := event.Transaction
 	txHex := hex.EncodeToString(tx)
 
-	verified, transactionId, err := utils.VerifyPresignTransaction(txHex, multisigAddress[0].Address, *event.BitcoinDepositRequest.Amount)
+	verified, _, err := utils.VerifyPresignTransaction(txHex, BtcAddress, *event.BitcoinDepositRequest.Amount)
 	if err != nil {
 		fmt.Println("Error verifying transaction signatures : ", err)
 		return
@@ -270,6 +291,9 @@ func handlePresignedDepositRequest(event *PodManager.PodManagerVerifyPresignedBi
 		fmt.Println("Transaction signatures not verified")
 		return
 	}
+
+	transactionId := hex.EncodeToString(event.BitcoinDepositRequest.TransactionId[:])
+	fmt.Println("Transaction ID Presign : ", transactionId)
 
 	_, err = CallConfirmBtcDeposit(event.Pod.Hex(), event.Operator.Hex(), transactionId, *event.BitcoinDepositRequest.Amount)
 	if err != nil {

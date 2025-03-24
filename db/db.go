@@ -48,6 +48,22 @@ func InsertMultiSigAddress(dbconn *sql.DB, address string, script string, ethAdd
 	return nil
 }
 
+func CheckIfMultiSigAddressExists(dbconn *sql.DB, address string) (bool, error) {
+	var exists bool
+
+	// Query to check if the address exists
+	query := `SELECT EXISTS(SELECT 1 FROM multi_sig_address WHERE address = $1 AND archived = false)`
+
+	// Execute the query
+	err := dbconn.QueryRow(query, address).Scan(&exists)
+	if err != nil {
+		fmt.Println("An error occurred while checking if address exists: ", err)
+		return false, err
+	}
+
+	return exists, nil
+}
+
 func QueryMultisigAddressByPodAddress(dbconn *sql.DB, podAddr string) []types.MultiSigAddress {
 	// fmt.Println("getting address for height: ", height)
 	var DB_reader *sql.Rows
