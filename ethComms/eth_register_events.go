@@ -268,6 +268,8 @@ func handlePresignedDepositRequest(event *PodManager.PodManagerVerifyPresignedBi
 		return
 	}
 
+	fmt.Println("Multisig address Presign: ", BtcAddress)
+
 	exists, err := db.CheckIfMultiSigAddressExists(dbconn, BtcAddress)
 	if err != nil {
 		fmt.Println("Error checking if multisig address exists : ", err)
