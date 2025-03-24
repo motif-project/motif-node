@@ -232,3 +232,16 @@ type SignedTransactionInfo struct {
 	Error interface{} `json:"error"`
 	ID    int         `json:"id"`
 }
+
+type TestMempoolAcceptResults struct {
+	Result []TestMempoolAcceptResult
+	Error  interface{} `json:"error"`
+	ID     int         `json:"id"`
+}
+
+type TestMempoolAcceptResult struct {
+	TxID         string `json:"txid"`                    // The transaction hash in hex
+	Allowed      bool   `json:"allowed"`                 // If the mempool allows this tx to be inserted
+	VSize        int    `json:"vsize"`                   // Virtual transaction size (only present when 'allowed' is true)
+	RejectReason string `json:"reject-reason,omitempty"` // Rejection reason (only present when 'allowed' is false)
+}

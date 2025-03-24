@@ -431,6 +431,29 @@ func SignRawTransaction(tx string, wallet string) (string, error) {
 	return response.Result.Hex, nil
 }
 
+func TestMempoolAccept(tx string, wallet string) (bool, error) {
+	data := []interface{}{[]string{tx}}
+	var response TestMempoolAcceptResults
+	result, err := SendRPC("testmempoolaccept", data, wallet, false)
+	if err != nil {
+		fmt.Println("error creating utxo for fee : ", err)
+		return false, err
+	}
+
+	err = json.Unmarshal(result, &response)
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON: ", err)
+		return false, err
+	}
+	if response.Error != nil {
+		return false, errors.New("error in test mempool accept")
+	}
+	if len(response.Result) <= 0 {
+		return false, nil
+	}
+	return response.Result[0].Allowed, nil
+}
+
 func GetChainParams() (*chaincfg.Params, error) {
 	env := viper.GetString("env")
 	if env == "dev" {
