@@ -39,6 +39,10 @@ func main() {
 	go ethComms.SubscribeToDepositRequests()
 	wg.Add(1)
 	go BtcDepositConfirmer.CheckWithdraw()
+	wg.Add(1)
+	go ethComms.SubscribeToPresignedDepositRequests()
+	wg.Add(1)
+	go ethComms.SubscribeToWithdrawPresignRequests()
 	ethComms.SubscribeToWithdrawRequests()
 	wg.Wait()
 }
